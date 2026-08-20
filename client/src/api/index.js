@@ -33,6 +33,9 @@ request.interceptors.response.use(
 // 首页数据
 export const getHomeData = () => request.get('/api/articles/home')
 
+// 登录
+export const login = (data) => request.post('/api/auth/login', data)
+
 // 文章列表
 export const getArticles = (params) => request.get('/api/articles', { params })
 

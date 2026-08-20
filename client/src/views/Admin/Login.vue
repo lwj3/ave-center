@@ -45,7 +45,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAdminStore } from '../../store/admin'
-import axios from 'axios'
+import { login } from '../../api'
 
 const router = useRouter()
 const adminStore = useAdminStore()
@@ -64,7 +64,7 @@ const handleLogin = async () => {
 
   loading.value = true
   try {
-    const res = await axios.post('/api/auth/login', form.value)
+    const res = await login(form.value)
     if (res.data.code === 0) {
       adminStore.setLogin(res.data.data)
       ElMessage.success('登录成功')
