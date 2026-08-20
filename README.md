@@ -82,21 +82,12 @@ npm run dev
 
 前端默认运行在 `http://localhost:5173`
 
-### 3. 部署到 GitHub Pages
-
-```bash
-# 前端构建
-cd client
-npm run build
-
-# dist 目录即为静态文件，可部署到 GitHub Pages
-# 或使用 GitHub Actions 自动部署（已配置 .github/workflows/deploy.yml）
 ```
 ## 使用说明
 
 ### 后台管理登录
 
-1. 访问 `http://localhost:5173/login`
+1. 访问 `https://ave-center.luweijun.com/login`
 2. 登录后自动跳转到文章管理页面
 
 ### 发布文章流程
@@ -235,7 +226,7 @@ npm run build
 #### 1.1 登录后台管理系统
 
 **步骤：**
-1. 打开浏览器，访问：`http://localhost:5173/login`
+1. 打开浏览器，访问：`https://ave-center.luweijun.com/login`
 2. 输入账号和密码：
 3. 点击「登录」按钮
 4. 登录成功后会自动跳转到「文章管理」页面
