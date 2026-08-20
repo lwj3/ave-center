@@ -22,6 +22,7 @@ exports.list = async (req, res, next) => {
     const { count, rows } = await Article.findAndCountAll({
       where,
       include,
+      distinct: true, // 解决 include 关联查询时 count 重复计数问题
       order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
       limit: parseInt(pageSize),
       offset: (parseInt(page) - 1) * parseInt(pageSize),
