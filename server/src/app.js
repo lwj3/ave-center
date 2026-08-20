@@ -19,11 +19,7 @@ const fileRoutes = require('./routes/file');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 中间件
-app.use(cors({
-  origin: true, // 允许所有来源
-  credentials: true,
-}));
+// 中间件（CORS 由 Nginx 反向代理统一处理）
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
