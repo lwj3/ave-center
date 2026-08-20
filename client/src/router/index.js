@@ -79,6 +79,13 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const adminStore = useAdminStore()
 
+  // GitHub Pages 404.html 回跳逻辑
+  const redirectPath = sessionStorage.getItem('redirect_path')
+  if (redirectPath && to.path === '/') {
+    sessionStorage.removeItem('redirect_path')
+    return next(redirectPath)
+  }
+
   if (to.meta.requiresAuth && !adminStore.isLoggedIn) {
     next({ path: '/login', query: { redirect: to.fullPath } })
   } else if (to.path === '/login' && adminStore.isLoggedIn) {
