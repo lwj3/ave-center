@@ -24,9 +24,11 @@
           <div class="carousel-card" :style="{ backgroundImage: item.image ? `url(${item.image})` : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }"
                @click="goArticle(item.article_id)">
             <div class="carousel-overlay">
-              <div class="carousel-badge">精选课程</div>
-              <h2 class="carousel-title">{{ item.title }}</h2>
-              <p class="carousel-subtitle">{{ item.subtitle }}</p>
+              <div class="carousel-content">
+                <div class="carousel-badge">精选课程</div>
+                <h2 class="carousel-title">{{ item.title }}</h2>
+                <p class="carousel-subtitle">{{ item.subtitle }}</p>
+              </div>
             </div>
           </div>
         </el-carousel-item>
@@ -252,11 +254,17 @@ onMounted(() => {
 
 .carousel-overlay {
   padding: 40px;
-  /* background: linear-gradient(transparent, rgba(0, 0, 0, 0.7)); */
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
   width: 100%;
   color: #fff;
+}
+.carousel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   max-width:1200px;
   margin: 0 auto;
+  padding: 0 15px;
 }
 
 .carousel-badge {
