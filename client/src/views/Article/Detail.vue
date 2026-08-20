@@ -50,7 +50,7 @@
           </div>
           <!-- 视频 -->
           <div v-if="article.video_url" class="article-video">
-            <video :src="article.video_url" controls preload="metadata" class="video-player">
+            <video :src="article.video_url" autoplay controls preload="metadata" class="video-player">
               您的浏览器不支持视频播放
             </video>
           </div>
