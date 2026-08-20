@@ -42,12 +42,13 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAdminStore } from '../../store/admin'
 import { login } from '../../api'
 
 const router = useRouter()
+const route = useRoute()
 const adminStore = useAdminStore()
 const loading = ref(false)
 
@@ -65,10 +66,11 @@ const handleLogin = async () => {
   loading.value = true
   try {
     const res = await login(form.value)
-    if (res.data.code === 0) {
-      adminStore.setLogin(res.data.data)
+    if (res.code === 0) {
+      adminStore.setLogin(res.data)
       ElMessage.success('登录成功')
-      router.push('/admin/articles')
+      const redirect = route.query.redirect || '/admin/articles'
+      router.push(redirect)
     }
   } catch (err) {
     ElMessage.error(err.response?.data?.message || '登录失败')
