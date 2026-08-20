@@ -92,9 +92,6 @@ npm run build
 # dist 目录即为静态文件，可部署到 GitHub Pages
 # 或使用 GitHub Actions 自动部署（已配置 .github/workflows/deploy.yml）
 ```
-
-> 注意：部署到 GitHub Pages 时，需要修改 `client/.env` 中的 `VITE_API_BASE` 为你的后端服务器地址。
-
 ## 使用说明
 
 ### 后台管理登录

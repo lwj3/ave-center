@@ -20,8 +20,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 中间件
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map(s => s.trim());
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // 允许无 origin 的请求（如服务端调用、Postman）
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '50mb' }));
