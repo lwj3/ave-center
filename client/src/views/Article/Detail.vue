@@ -98,7 +98,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticleDetail } from '../../api'
 
@@ -133,6 +133,12 @@ const formatDate = (dateStr) => {
 
 onMounted(() => {
   loadArticle()
+})
+
+// 监听路由参数变化（点击侧边栏推荐文章时重新加载）
+watch(() => route.params.id, () => {
+  loadArticle()
+  window.scrollTo(0, 0)
 })
 </script>
 
