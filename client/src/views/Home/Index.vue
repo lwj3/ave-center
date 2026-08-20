@@ -252,9 +252,11 @@ onMounted(() => {
 
 .carousel-overlay {
   padding: 40px;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  /* background: linear-gradient(transparent, rgba(0, 0, 0, 0.7)); */
   width: 100%;
   color: #fff;
+  max-width:1200px;
+  margin: 0 auto;
 }
 
 .carousel-badge {
