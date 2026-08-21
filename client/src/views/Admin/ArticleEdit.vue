@@ -58,13 +58,13 @@
                     :before-upload="beforeImageUpload"
                     :http-request="uploadCover"
                   >
-                    <img v-if="form.cover_image && !isCoverUrl" :src="form.cover_image" class="cover-preview" />
+                    <img v-if="form.cover_image && !isCoverUrl" :src="resolveUploadUrl(form.cover_image)" class="cover-preview" />
                     <el-button v-else type="primary" plain>上传封面</el-button>
                   </el-upload>
                 </el-tab-pane>
                 <el-tab-pane label="从库中选择" name="library">
                   <div v-if="form.cover_image && !isCoverUrl" style="margin-bottom: 8px">
-                    <img :src="form.cover_image" class="cover-preview" />
+                    <img :src="resolveUploadUrl(form.cover_image)" class="cover-preview" />
                   </div>
                   <el-button type="primary" @click="openFileSelector('image')">从文件库选择</el-button>
                 </el-tab-pane>
@@ -124,12 +124,12 @@
             <template #default="{ row }">
               <img 
                 v-if="row.type === 'image'" 
-                :src="row.url" 
+                :src="resolveUploadUrl(row.url)" 
                 class="library-preview"
               />
               <video 
                 v-else 
-                :src="row.url" 
+                :src="resolveUploadUrl(row.url)" 
                 class="library-preview video"
               />
             </template>
@@ -182,12 +182,12 @@
             <template #default="{ row }">
               <img 
                 v-if="row.type === 'image'" 
-                :src="row.url" 
+                :src="resolveUploadUrl(row.url)" 
                 class="library-preview"
               />
               <video 
                 v-else 
-                :src="row.url" 
+                :src="resolveUploadUrl(row.url)" 
                 class="library-preview video"
               />
             </template>
@@ -238,6 +238,7 @@ import {
   adminGetArticle, adminCreateArticle, adminUpdateArticle,
   adminGetCategories, getTags, uploadFile, adminGetFiles,
 } from '../../api'
+import { resolveUploadUrl } from '../../utils/uploadUrl'
 
 const route = useRoute()
 const router = useRouter()

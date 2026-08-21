@@ -19,13 +19,13 @@
           <template #default="{ row }">
             <img 
               v-if="row.type === 'image'" 
-              :src="row.url" 
+              :src="resolveUploadUrl(row.url)" 
               class="file-preview"
               @click="previewFile(row)"
             />
             <video 
               v-else 
-              :src="row.url" 
+              :src="resolveUploadUrl(row.url)" 
               class="file-preview video"
               @click="previewFile(row)"
             />
@@ -89,8 +89,8 @@
     <!-- 预览对话框 -->
     <el-dialog v-model="previewVisible" title="文件预览" width="60%">
       <div class="preview-container">
-        <img v-if="previewFileData?.type === 'image'" :src="previewFileData.url" class="preview-image" />
-        <video v-else :src="previewFileData?.url" controls class="preview-video" />
+        <img v-if="previewFileData?.type === 'image'" :src="resolveUploadUrl(previewFileData.url)" class="preview-image" />
+        <video v-else :src="resolveUploadUrl(previewFileData?.url)" controls class="preview-video" />
       </div>
     </el-dialog>
   </div>
@@ -100,6 +100,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { adminGetFiles, adminDeleteFile } from '../../api'
+import { resolveUploadUrl } from '../../utils/uploadUrl'
 
 const files = ref([])
 const loading = ref(false)
@@ -153,7 +154,7 @@ const previewFile = (file) => {
 
 // 复制URL
 const copyUrl = async (file) => {
-  const url = `${window.location.origin}${file.url}`
+  const url = resolveUploadUrl(file.url) || `${window.location.origin}${file.url}`
   try {
     await navigator.clipboard.writeText(url)
     ElMessage.success('链接已复制到剪贴板')

@@ -50,13 +50,13 @@
           </div>
           <!-- 视频 -->
           <div v-if="article.video_url" class="article-video">
-            <video :src="article.video_url" autoplay controls preload="metadata" class="video-player">
+            <video :src="resolveUploadUrl(article.video_url)" autoplay controls preload="metadata" class="video-player">
               您的浏览器不支持视频播放
             </video>
           </div>
 
           <!-- 文章内容 -->
-          <div class="article-content" v-html="article.content"></div>
+          <div class="article-content" v-html="articleContent"></div>
         </article>
 
         <!-- 侧边栏 -->
@@ -71,7 +71,7 @@
                 class="recommend-item"
                 @click="$router.push(`/article/${item.id}`)"
               >
-                <div class="recommend-thumb" :style="item.cover_image ? { backgroundImage: `url(${item.cover_image})` } : {}"></div>
+                <div class="recommend-thumb" :style="item.cover_image ? { backgroundImage: `url(${resolveUploadUrl(item.cover_image)})` } : {}"></div>
                 <div class="recommend-info">
                   <h4 class="recommend-title">{{ item.title }}</h4>
                   <span class="recommend-views">👁 {{ item.view_count }}</span>
@@ -98,14 +98,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticleDetail } from '../../api'
+import { resolveUploadUrl, resolveHtmlUploadUrls } from '../../utils/uploadUrl'
 
 const route = useRoute()
 const article = ref(null)
 const recommended = ref([])
 const loading = ref(true)
+
+// 处理富文本中的上传文件路径（GitHub Pages 兼容）
+const articleContent = computed(() => {
+  return article.value ? resolveHtmlUploadUrls(article.value.content) : ''
+})
 
 const loadArticle = async () => {
   loading.value = true

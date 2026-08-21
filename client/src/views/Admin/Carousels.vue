@@ -17,7 +17,7 @@
       <el-table-column prop="id" label="ID" width="70" />
       <el-table-column label="封面" width="150">
         <template #default="{ row }">
-          <img v-if="row.cover_image" :src="row.cover_image" style="width: 120px; height: 68px; object-fit: cover; border-radius: 4px" />
+          <img v-if="row.cover_image" :src="resolveUploadUrl(row.cover_image)" style="width: 120px; height: 68px; object-fit: cover; border-radius: 4px" />
           <span v-else style="color: #909399">无封面</span>
         </template>
       </el-table-column>
@@ -50,6 +50,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { adminGetArticles, adminUpdateArticle } from '../../api'
+import { resolveUploadUrl } from '../../utils/uploadUrl'
 
 const router = useRouter()
 const carousels = ref([])

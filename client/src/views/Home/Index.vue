@@ -21,7 +21,7 @@
     <section class="carousel-section" v-if="carousels.length">
       <el-carousel :interval="5000" arrow="always" height="400px">
         <el-carousel-item v-for="item in carousels" :key="item.id">
-          <div class="carousel-card" :style="{ backgroundImage: item.image ? `url(${item.image})` : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }"
+          <div class="carousel-card" :style="{ backgroundImage: item.image ? `url(${resolveUploadUrl(item.image)})` : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }"
                @click="goArticle(item.article_id)">
             <div class="carousel-overlay">
               <div class="carousel-content">
@@ -61,7 +61,7 @@
             class="featured-card"
             @click="goArticle(article.id)"
           >
-            <div class="featured-image" :style="article.featured_image ? { backgroundImage: `url(${article.featured_image})` } : article.cover_image ? { backgroundImage: `url(${article.cover_image})` } : {}">
+            <div class="featured-image" :style="article.featured_image ? { backgroundImage: `url(${resolveUploadUrl(article.featured_image)})` } : article.cover_image ? { backgroundImage: `url(${resolveUploadUrl(article.cover_image)})` } : {}">
               <div class="featured-image-overlay">
                 <div v-if="article.video_url" class="play-icon">▶</div>
               </div>
@@ -96,7 +96,7 @@
             class="article-card"
             @click="goArticle(article.id)"
           >
-            <div class="article-thumb" :style="article.cover_image ? { backgroundImage: `url(${article.cover_image})` } : {}">
+            <div class="article-thumb" :style="article.cover_image ? { backgroundImage: `url(${resolveUploadUrl(article.cover_image)})` } : {}">
               <div v-if="article.video_url" class="play-btn">▶</div>
             </div>
             <div class="article-info">
@@ -127,6 +127,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getHomeData, getArticles } from '../../api'
+import { resolveUploadUrl } from '../../utils/uploadUrl'
 
 const router = useRouter()
 const carousels = ref([])

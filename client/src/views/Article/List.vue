@@ -39,7 +39,7 @@
           class="article-card"
           @click="$router.push(`/article/${article.id}`)"
         >
-          <div class="article-thumb" :style="article.cover_image ? { backgroundImage: `url(${article.cover_image})` } : {}">
+          <div class="article-thumb" :style="article.cover_image ? { backgroundImage: `url(${resolveUploadUrl(article.cover_image)})` } : {}">
             <div v-if="article.video_url" class="play-btn">▶</div>
           </div>
           <div class="article-info">
@@ -92,6 +92,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticles } from '../../api'
+import { resolveUploadUrl } from '../../utils/uploadUrl'
 
 const route = useRoute()
 const articles = ref([])
