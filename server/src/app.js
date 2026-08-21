@@ -50,24 +50,24 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// // 请求超时保护（防止慢请求占用连接）
-// app.use((req, res, next) => {
-//   res.setTimeout(30000, () => {
-//     console.error('[Timeout] Request timed out:', req.originalUrl);
-//     if (!res.headersSent) {
-//       res.status(503).json({ code: 503, message: '请求超时', data: null });
-//     }
-//   });
-//   next();
-// });
+// 请求超时保护（防止慢请求占用连接）
+app.use((req, res, next) => {
+  res.setTimeout(30000, () => {
+    console.error('[Timeout] Request timed out:', req.originalUrl);
+    if (!res.headersSent) {
+      res.status(503).json({ code: 503, message: '请求超时', data: null });
+    }
+  });
+  next();
+});
 
-// CORS 跨域（开发环境直接启用，生产环境由 Nginx 处理）
-if (process.env.NODE_ENV !== 'production') {
-  app.use(cors({
-    origin: true,
-    credentials: true,
-  }));
-}
+// // CORS 跨域（开发环境直接启用，生产环境由 Nginx 处理）
+// if (process.env.NODE_ENV !== 'production') {
+//   app.use(cors({
+//     origin: true,
+//     credentials: true,
+//   }));
+// }
 
 // 中间件
 app.use(express.json({ limit: '50mb' }));
