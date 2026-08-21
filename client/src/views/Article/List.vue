@@ -281,8 +281,6 @@ onMounted(async () => {
   display: flex;
   gap: 0px;
   margin-bottom: 20px;
-  padding: 2px;
-  border-radius: 8px;
   flex-wrap: wrap;
 }
 
