@@ -22,8 +22,11 @@ const fileRoutes = require('./routes/file');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 安全头（禁用 CSP，避免影响前端）
-app.use(helmet({ contentSecurityPolicy: false }));
+// 安全头（禁用 CSP 和 CORP，避免影响跨域图片加载）
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 
 // Gzip 压缩响应体
 app.use(compression());
