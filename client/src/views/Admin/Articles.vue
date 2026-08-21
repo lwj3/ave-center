@@ -36,7 +36,8 @@
         <template #default="{ row }">
           <div class="article-title-cell">
             <span>{{ row.title }}</span>
-            <el-tag v-if="row.is_featured" type="warning" size="small" style="margin-left: 8px">推荐</el-tag>
+            <el-tag v-if="row.is_featured" type="warning" size="small" style="margin-left: 8px">轮播</el-tag>
+            <el-tag v-if="row.is_recommended" type="success" size="small" style="margin-left: 4px">推荐</el-tag>
             <el-tag v-if="row.status === 0" type="info" size="small" style="margin-left: 4px">草稿</el-tag>
           </div>
         </template>
