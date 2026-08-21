@@ -36,7 +36,6 @@
         <el-button
           :type="!activeSubCategoryId ? 'primary' : 'default'"
           @click="selectSubCategory(null)"
-          size="large"
         >
           全部
         </el-button>
@@ -45,7 +44,6 @@
           :key="sub.id"
           :type="activeSubCategoryId === sub.id ? 'primary' : 'default'"
           @click="selectSubCategory(sub.id)"
-          size="large"
         >
           {{ sub.name }}
         </el-button>
@@ -281,10 +279,9 @@ onMounted(async () => {
 
 .sub-category-bar {
   display: flex;
-  gap: 10px;
+  gap: 0px;
   margin-bottom: 20px;
-  padding: 12px 16px;
-  background: #f5f7fa;
+  padding: 2px;
   border-radius: 8px;
   flex-wrap: wrap;
 }
