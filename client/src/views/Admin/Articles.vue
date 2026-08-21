@@ -50,7 +50,7 @@
           {{ formatDate(row.created_at) }}
         </template>
       </el-table-column> -->
-      <el-table-column label="操作" width="200" fixed="right">
+      <el-table-column label="操作" width="100" fixed="right">
         <template #default="{ row }">
           <el-button link type="primary" @click="$router.push(`/admin/article/edit/${row.id}`)">编辑</el-button>
           <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
