@@ -225,8 +225,16 @@ exports.homeData = async (req, res, next) => {
       order: [['sort_order', 'DESC'], ['id', 'ASC']],
     });
 
-    // 推荐文章（精选）- 使用与轮播相同的数据
-    const featured = featuredArticles;
+    // 课程精选（首页）- 显示 is_recommended=1 的文章
+    const featured = await Article.findAll({
+      where: { status: 1, is_recommended: 1 },
+      include: [
+        { model: Category, as: 'category', attributes: ['id', 'name'] },
+        { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
+      ],
+      order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
+      limit: 10,
+    });
 
     // 推荐文章列表
     const recommendedArticles = await Article.findAll({
