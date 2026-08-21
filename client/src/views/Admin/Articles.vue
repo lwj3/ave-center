@@ -31,8 +31,8 @@
 
     <!-- 文章表格 -->
     <el-table :data="articles" v-loading="loading" stripe>
-      <el-table-column prop="id" label="ID" width="70" />
-      <el-table-column prop="title" label="标题" min-width="250">
+      <el-table-column prop="id" label="ID" width="50" />
+      <el-table-column prop="title" label="标题" min-width="350">
         <template #default="{ row }">
           <div class="article-title-cell">
             <span>{{ row.title }}</span>
@@ -45,11 +45,11 @@
       <el-table-column prop="category.name" label="分类" width="120" />
       <el-table-column prop="author" label="作者" width="120" />
       <el-table-column prop="view_count" label="浏览量" width="100" />
-      <el-table-column prop="created_at" label="创建时间" width="170">
+      <!-- <el-table-column prop="created_at" label="创建时间" width="170">
         <template #default="{ row }">
           {{ formatDate(row.created_at) }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
           <el-button link type="primary" @click="$router.push(`/admin/article/edit/${row.id}`)">编辑</el-button>
