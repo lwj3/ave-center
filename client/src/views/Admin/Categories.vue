@@ -6,7 +6,7 @@
       </el-button>
     </div>
 
-    <el-table :data="categories" v-loading="loading" stripe>
+    <el-table :data="categories" v-loading="loading" stripe row-key="id" :tree-props="{ children: 'children' }" default-expand-all>
       <el-table-column prop="id" label="ID" width="70" />
       <el-table-column prop="icon" label="图标" width="80">
         <template #default="{ row }">
@@ -39,6 +39,16 @@
     <!-- 分类编辑弹窗 -->
     <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑分类' : '新建分类'" width="500px">
       <el-form :model="form" label-width="80px">
+        <el-form-item label="上级分类">
+          <el-select v-model="form.parent_id" placeholder="无（作为顶级分类）" clearable style="width: 100%">
+            <el-option
+              v-for="cat in categories.filter(c => !c.parent_id)"
+              :key="cat.id"
+              :label="cat.name"
+              :value="cat.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="分类名称" required>
           <el-input v-model="form.name" placeholder="请输入分类名称" />
         </el-form-item>
@@ -84,6 +94,7 @@ const form = ref({
   description: '',
   sort_order: 0,
   status: 1,
+  parent_id: null,
 })
 
 const loadCategories = async () => {
@@ -108,11 +119,12 @@ const openDialog = (row) => {
       description: row.description || '',
       sort_order: row.sort_order,
       status: row.status,
+      parent_id: row.parent_id || null,
     }
   } else {
     isEdit.value = false
     editId.value = null
-    form.value = { name: '', icon: '', description: '', sort_order: 0, status: 1 }
+    form.value = { name: '', icon: '', description: '', sort_order: 0, status: 1, parent_id: null }
   }
   dialogVisible.value = true
 }

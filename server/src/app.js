@@ -61,7 +61,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// 中间件（CORS 由 Nginx 反向代理统一处理）
+// CORS 跨域（开发环境直接启用，生产环境由 Nginx 处理）
+if (process.env.NODE_ENV !== 'production') {
+  app.use(cors({
+    origin: true,
+    credentials: true,
+  }));
+}
+
+// 中间件
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -99,7 +107,7 @@ process.on('uncaughtException', (err) => {
 
 // 启动服务器
 let server;
-sequelize.sync({ alter: process.env.NODE_ENV === 'development' })
+sequelize.sync()  // 不用 alter，避免反复修改表结构导致索引累积超限
   .then(() => {
     console.log('✅ 数据库同步成功');
     server = app.listen(PORT, () => {

@@ -35,7 +35,15 @@
           <el-col :span="8">
             <el-form-item label="所属分类">
               <el-select v-model="form.category_id" placeholder="请选择分类" style="width: 100%">
-                <el-option v-for="cat in categories" :key="cat.id" :label="cat.name" :value="cat.id" />
+                <template v-for="cat in categories" :key="cat.id">
+                  <el-option :label="cat.name" :value="cat.id" />
+                  <el-option
+                    v-for="sub in (cat.children || [])"
+                    :key="sub.id"
+                    :label="'  └ ' + sub.name"
+                    :value="sub.id"
+                  />
+                </template>
               </el-select>
             </el-form-item>
 

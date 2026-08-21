@@ -7,6 +7,10 @@ const Carousel = require('./Carousel');
 const Admin = require('./Admin');
 const File = require('./File');
 
+// 分类自关联：二级分类
+Category.hasMany(Category, { as: 'children', foreignKey: 'parent_id' });
+Category.belongsTo(Category, { as: 'parent', foreignKey: 'parent_id' });
+
 // 文章与分类：多对一
 Article.belongsTo(Category, { foreignKey: 'category_id', as: 'category' });
 Category.hasMany(Article, { foreignKey: 'category_id', as: 'articles' });

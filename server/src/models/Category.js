@@ -10,7 +10,7 @@ const Category = sequelize.define('Category', {
   name: {
     type: DataTypes.STRING(100),
     allowNull: false,
-    unique: true,
+    // unique: true,  // alter:true 会反复创建索引导致超限，改由代码层去重
   },
   icon: {
     type: DataTypes.STRING(255),

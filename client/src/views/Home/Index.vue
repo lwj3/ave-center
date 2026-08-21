@@ -40,7 +40,7 @@
       <section class="category-section">
         <div class="category-grid">
           <div
-            v-for="cat in categories"
+            v-for="cat in categories.filter(c => !c.parent_id)"
             :key="cat.id"
             class="category-card"
             @click="goCategory(cat)"

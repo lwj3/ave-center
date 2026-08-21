@@ -10,7 +10,7 @@ const Tag = sequelize.define('Tag', {
   name: {
     type: DataTypes.STRING(50),
     allowNull: false,
-    unique: true,
+    // unique: true,  // alter:true 会反复创建索引导致超限，改由代码层去重
   },
   color: {
     type: DataTypes.STRING(20),

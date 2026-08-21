@@ -31,6 +31,26 @@
         <span class="article-count">共 {{ total }} 篇</span>
       </div>
 
+      <!-- 子分类筛选 -->
+      <div v-if="subCategories.length" class="sub-category-bar">
+        <el-button
+          :type="!activeSubCategoryId ? 'primary' : 'default'"
+          @click="selectSubCategory(null)"
+          size="large"
+        >
+          全部
+        </el-button>
+        <el-button
+          v-for="sub in subCategories"
+          :key="sub.id"
+          :type="activeSubCategoryId === sub.id ? 'primary' : 'default'"
+          @click="selectSubCategory(sub.id)"
+          size="large"
+        >
+          {{ sub.name }}
+        </el-button>
+      </div>
+
       <!-- 文章列表 -->
       <div v-loading="loading" class="article-list">
         <div
@@ -91,7 +111,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { getArticles } from '../../api'
+import { getArticles, getCategories } from '../../api'
 import { resolveUploadUrl } from '../../utils/uploadUrl'
 
 const route = useRoute()
@@ -103,6 +123,31 @@ const total = ref(0)
 
 const categoryName = ref(route.query.category_name || '')
 const tagName = ref(route.query.tag_name || '')
+const subCategories = ref([])
+const activeSubCategoryId = ref(null)
+
+// 加载子分类
+const loadSubCategories = async () => {
+  if (!route.query.category_id) {
+    subCategories.value = []
+    return
+  }
+  try {
+    const res = await getCategories()
+    if (res.code === 0) {
+      const parent = res.data.find(c => c.id === parseInt(route.query.category_id))
+      subCategories.value = parent?.children || []
+    }
+  } catch (err) {
+    console.error('加载子分类失败:', err)
+  }
+}
+
+const selectSubCategory = (subId) => {
+  activeSubCategoryId.value = subId
+  page.value = 1
+  loadArticles()
+}
 
 const loadArticles = async () => {
   loading.value = true
@@ -111,7 +156,12 @@ const loadArticles = async () => {
       page: page.value,
       pageSize: pageSize.value,
     }
-    if (route.query.category_id) params.category_id = route.query.category_id
+    // 优先使用子分类ID，否则使用父分类ID
+    if (activeSubCategoryId.value) {
+      params.category_id = activeSubCategoryId.value
+    } else if (route.query.category_id) {
+      params.category_id = route.query.category_id
+    }
     if (route.query.tag_id) params.tag_id = route.query.tag_id
 
     const res = await getArticles(params)
@@ -133,14 +183,17 @@ const formatCount = (count) => {
 }
 
 // 监听路由变化（分类/标签切换）
-watch(() => route.query, (newQuery) => {
+watch(() => route.query, async (newQuery) => {
   categoryName.value = newQuery.category_name || ''
   tagName.value = newQuery.tag_name || ''
+  activeSubCategoryId.value = null
   page.value = 1
+  await loadSubCategories()
   loadArticles()
 })
 
-onMounted(() => {
+onMounted(async () => {
+  await loadSubCategories()
   loadArticles()
 })
 </script>
@@ -224,6 +277,16 @@ onMounted(() => {
   color: #1a1a2e;
   padding-left: 12px;
   border-left: 4px solid #409EFF;
+}
+
+.sub-category-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: #f5f7fa;
+  border-radius: 8px;
+  flex-wrap: wrap;
 }
 
 .article-count {
