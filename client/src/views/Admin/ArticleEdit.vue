@@ -298,7 +298,9 @@ const editorConfig = {
         try {
           const res = await uploadFile(file)
           if (res.code === 0) {
-            insertFn(res.data.url, file.name, res.data.url)
+            // 转换相对路径为绝对路径
+            const absoluteUrl = resolveUploadUrl(res.data.url)
+            insertFn(absoluteUrl, file.name, absoluteUrl)
           }
         } catch (err) {
           ElMessage.error('图片上传失败')
@@ -314,7 +316,9 @@ const editorConfig = {
         try {
           const res = await uploadFile(file)
           if (res.code === 0) {
-            insertFn(res.data.url)
+            // 转换相对路径为绝对路径
+            const absoluteUrl = resolveUploadUrl(res.data.url)
+            insertFn(absoluteUrl)
           }
         } catch (err) {
           ElMessage.error('视频上传失败')
