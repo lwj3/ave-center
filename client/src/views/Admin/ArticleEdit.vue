@@ -246,7 +246,7 @@ import {
   adminGetArticle, adminCreateArticle, adminUpdateArticle,
   adminGetCategories, getTags, uploadFile, adminGetFiles,
 } from '../../api'
-import { resolveUploadUrl } from '../../utils/uploadUrl'
+import { resolveUploadUrl, resolveHtmlUploadUrls } from '../../utils/uploadUrl'
 
 const route = useRoute()
 const router = useRouter()
@@ -506,9 +506,9 @@ const loadData = async () => {
           is_featured: article.is_featured,
           is_recommended: article.is_recommended || 0,
         }
-        // 设置编辑器内容
+        // 设置编辑器内容（替换相对路径为绝对路径）
         if (editorRef.value) {
-          editorRef.value.setHtml(article.content)
+          editorRef.value.setHtml(resolveHtmlUploadUrls(article.content))
         }
       }
     } catch (err) {
