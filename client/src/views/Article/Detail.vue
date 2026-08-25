@@ -327,7 +327,7 @@ watch(() => route.params.id, () => {
 .sidebar-card {
   background: #fff;
   border-radius: 12px;
-  padding: 20px;
+  padding: 10px;
   position: sticky;
   top: 90px;
 }
@@ -351,7 +351,6 @@ watch(() => route.params.id, () => {
   display: flex;
   gap: 12px;
   cursor: pointer;
-  padding: 8px;
   border-radius: 8px;
   transition: background 0.3s;
 }
@@ -406,7 +405,7 @@ watch(() => route.params.id, () => {
   }
 
   .article-main {
-    padding: 20px;
+    padding: 10px 0;
   }
 
   .article-title {
