@@ -8,9 +8,11 @@
 
     <el-table :data="categories" v-loading="loading" stripe row-key="id" :tree-props="{ children: 'children' }" default-expand-all>
       <el-table-column prop="id" label="ID" width="70" />
-      <el-table-column prop="icon" label="图标" width="80">
+      <el-table-column prop="icon" label="图标" width="120">
         <template #default="{ row }">
-          <span style="font-size: 24px">{{ row.icon || '📁' }}</span>
+          <span style="font-size: 24px">
+            <img :src="row.icon" v-if="row.icon" style="width: 1em; height: 1em; margin-right: 8px" />
+          </span>
         </template>
       </el-table-column>
       <el-table-column prop="name" label="名称" min-width="150" />
@@ -21,11 +23,6 @@
           <el-tag :type="row.status === 1 ? 'success' : 'info'" size="small">
             {{ row.status === 1 ? '启用' : '禁用' }}
           </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="created_at" label="创建时间" width="170">
-        <template #default="{ row }">
-          {{ formatDate(row.created_at) }}
         </template>
       </el-table-column>
       <el-table-column label="操作" width="200" fixed="right">
