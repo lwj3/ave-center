@@ -50,10 +50,12 @@
             <div class="featured-info">
               <h3 class="featured-title">{{ article.featured_title || article.title }}</h3>
               <div class="featured-meta">
-                <span v-if="article.tags.length" class="tag-pill" :style="{ color: article.tags[0].color, backgroundColor: article.tags[0].color + '18' }" @click.stop="goTag(article.tags[0])">
-                  {{ article.tags[0].name }}
-                </span>
-                <span class="featured-views">👁 {{ formatCount(article.view_count) }}</span>
+                <div>
+                  <span v-if="article.tags.length" class="tag-pill" :style="{ color: article.tags[0].color, backgroundColor: article.tags[0].color + '18' }" @click.stop="goTag(article.tags[0])">
+                    {{ article.tags[0].name }}
+                  </span>
+                </div>
+                <span class="featured-views">👁 &nbsp;{{ formatCount(article.view_count) }}</span>
               </div>
             </div>
           </div>
@@ -79,10 +81,12 @@
             <div class="featured-info">
               <h3 class="featured-title">{{ article.title }}</h3>
               <div class="featured-meta">
-                <span v-if="article.tags.length" class="tag-pill" :style="{ color: article.tags[0].color, backgroundColor: article.tags[0].color + '18' }" @click.stop="goTag(article.tags[0])">
-                  {{ article.tags[0].name }}
-                </span>
-                <span class="featured-views">👁 {{ formatCount(article.view_count) }}</span>
+                <div>
+                  <span v-if="article.tags.length" class="tag-pill" :style="{ color: article.tags[0].color, backgroundColor: article.tags[0].color + '18' }" @click.stop="goTag(article.tags[0])">
+                    {{ article.tags[0].name }}
+                  </span>
+                </div>
+                <span class="featured-views">👁 &nbsp;{{ formatCount(article.view_count) }}</span>
               </div>
             </div>
           </div>
@@ -270,14 +274,9 @@ onMounted(() => {
   gap: 12px;
   transition: all 0.3s;
 }
-
-.featured-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
 .featured-thumb {
   width: 140px;
+  height: 80px;
   background: #1a1a2e3d;
   background-size: cover;
   background-position: center;
@@ -334,7 +333,7 @@ onMounted(() => {
 
 .tag-pill {
   font-size: 12px;
-  padding: 2px 12px;
+  padding: 2px 8px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;

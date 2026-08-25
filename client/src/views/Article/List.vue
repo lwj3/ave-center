@@ -1,19 +1,5 @@
 <template>
   <div class="article-list-page">
-    <!-- 顶部导航 -->
-    <header class="site-header">
-      <div class="container header-inner">
-        <div class="logo" @click="$router.push('/')">
-            <img style="width: 30px;" src="https://ave.ai/_nuxt/avedex_mobile_logo.DN0XNEWA.webp"/>
-            <span class="logo-text">AVE学习中心</span>
-        </div>
-        <nav class="header-nav">
-          <router-link to="/">首页</router-link>
-          <router-link to="/admin">后台管理</router-link>
-        </nav>
-      </div>
-    </header>
-
     <div class="container list-container">
       <!-- 筛选标题 -->
       <div class="filter-bar">
@@ -50,32 +36,29 @@
       </div>
 
       <!-- 文章列表 -->
-      <div v-loading="loading" class="article-list">
+      <div v-loading="loading" class="featured-list">
         <div
           v-for="article in articles"
           :key="article.id"
-          class="article-card"
+          class="featured-card"
           @click="$router.push(`/article/${article.id}`)"
         >
-          <div class="article-thumb" :style="article.cover_image ? { backgroundImage: `url(${resolveUploadUrl(article.cover_image)})` } : {}">
-            <div v-if="article.video_url" class="play-btn">▶</div>
+          <div class="featured-thumb" :style="article.cover_image ? { backgroundImage: `url(${resolveUploadUrl(article.cover_image)})` } : {}">
+            <div v-if="article.video_url" class="play-icon">▶</div>
           </div>
-          <div class="article-info">
-            <h3 class="article-title">{{ article.title }}</h3>
-            <p class="article-summary">{{ article.summary }}</p>
-            <div class="article-meta">
-              <span v-if="article.category" class="meta-cat" @click.stop="$router.push(`/articles?category_id=${article.category.id}&category_name=${encodeURIComponent(article.category.name)}`)">
-                {{ article.category.name }}
-              </span>
-              <span v-for="tag in (article.tags || []).slice(0, 3)" :key="tag.id"
-                class="meta-tag"
-                :style="{ color: tag.color, borderColor: tag.color }"
-                @click.stop="$router.push(`/articles?tag_id=${tag.id}&tag_name=${encodeURIComponent(tag.name)}`)"
-              >
-                {{ tag.name }}
-              </span>
-              <span class="meta-author">{{ article.author }}</span>
-              <span class="meta-views">👁 {{ formatCount(article.view_count) }}</span>
+          <div class="featured-info">
+            <h3 class="featured-title">{{ article.title }}</h3>
+            <div class="featured-meta">
+              <div>
+                <span v-for="tag in (article.tags || []).slice(0, 3)" :key="tag.id"
+                  class="tag-pill"
+                  :style="{ color: tag.color, backgroundColor: tag.color + '18' }"
+                  @click.stop="$router.push(`/articles?tag_id=${tag.id}&tag_name=${encodeURIComponent(tag.name)}`)"
+                >
+                  {{ tag.name }}
+                </span>
+              </div>
+              <span class="featured-views">👁 &nbsp;{{ formatCount(article.view_count) }}</span>
             </div>
           </div>
         </div>
@@ -96,13 +79,6 @@
         />
       </div>
     </div>
-
-    <!-- 页脚 -->
-    <footer class="site-footer">
-      <div class="container">
-        <p>© 2026 AVE学习中心. All rights reserved.</p>
-      </div>
-    </footer>
   </div>
 </template>
 
@@ -200,48 +176,6 @@ onMounted(async () => {
 .article-list-page {
   min-height: 100vh;
 }
-
-.site-header {
-  background: #fff;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-}
-.logo{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.logo-text {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1a2e;
-  cursor: pointer;
-}
-
-.header-nav {
-  display: flex;
-  gap: 24px;
-}
-
-.header-nav a {
-  font-size: 15px;
-  color: #606266;
-  transition: color 0.3s;
-}
-
-.header-nav a:hover {
-  color: #409EFF;
-}
-
 .list-container {
   padding-top: 24px;
   padding-bottom: 40px;
@@ -289,54 +223,51 @@ onMounted(async () => {
   color: #909399;
 }
 
-.article-list {
+.featured-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
-.article-card {
+.featured-card {
   display: flex;
+  flex-direction: row;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
+  gap: 12px;
   transition: all 0.3s;
 }
 
-.article-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  transform: translateX(4px);
-}
-
-.article-thumb {
-  width: 200px;
-  min-height: 140px;
-  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+.featured-thumb {
+  width: 140px;
+  height: 80px;
+  background: #1a1a2e3d;
   background-size: cover;
   background-position: center;
   position: relative;
   flex-shrink: 0;
+  border-radius: 12px;
 }
 
-.play-btn {
+.play-icon {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 14px;
   color: #333;
 }
 
-.article-info {
-  padding: 16px 20px;
+.featured-info {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -344,57 +275,43 @@ onMounted(async () => {
   min-width: 0;
 }
 
-.article-title {
-  font-size: 17px;
-  font-weight: 600;
+.featured-title {
+  font-size: 16px;
+  font-weight: 700;
   color: #1a1a2e;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
   line-height: 1.4;
-}
-
-.article-summary {
-  font-size: 14px;
-  color: #909399;
-  margin-bottom: 10px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.article-meta {
+.featured-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 13px;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12px;
   color: #909399;
-  flex-wrap: wrap;
+  padding-right: 2px;
 }
 
-.meta-cat {
-  background: #ecf5ff;
-  color: #409EFF;
-  padding: 2px 10px;
-  border-radius: 12px;
+.tag-pill {
   font-size: 12px;
-  cursor: pointer;
-}
-
-.meta-cat:hover {
-  background: #409EFF;
-  color: #fff;
-}
-
-.meta-tag {
-  font-size: 12px;
-  padding: 2px 10px;
-  border: 1px solid;
+  padding: 2px 8px;
   border-radius: 12px;
   cursor: pointer;
+  transition: all 0.3s;
+  flex-shrink: 0;
 }
 
-.meta-tag:hover {
+.tag-pill:hover {
   opacity: 0.7;
+}
+
+.featured-views {
+  flex-shrink: 0;
 }
 
 .pagination-wrapper {
@@ -411,14 +328,5 @@ onMounted(async () => {
   font-size: 14px;
 }
 
-@media (max-width: 768px) {
-  .article-card {
-    flex-direction: column;
-  }
 
-  .article-thumb {
-    width: 100%;
-    height: 160px;
-  }
-}
 </style>

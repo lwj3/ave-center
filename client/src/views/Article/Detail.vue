@@ -1,19 +1,5 @@
 <template>
   <div class="article-detail-page">
-    <!-- 顶部导航 -->
-    <header class="site-header">
-      <div class="container header-inner">
-        <div class="logo" @click="$router.push('/')">
-          <img style="width: 30px;" src="https://ave.ai/_nuxt/avedex_mobile_logo.DN0XNEWA.webp"/>
-          <span class="logo-text">AVE学习中心</span>
-        </div>
-        <nav class="header-nav">
-          <router-link to="/">首页</router-link>
-          <router-link to="/admin">后台管理</router-link>
-        </nav>
-      </div>
-    </header>
-
     <div class="container detail-container">
       <div v-if="loading" class="loading-wrapper">
         <el-skeleton :rows="10" animated />
@@ -87,13 +73,6 @@
         <el-button type="primary" @click="$router.push('/')">返回首页</el-button>
       </div>
     </div>
-
-    <!-- 页脚 -->
-    <footer class="site-footer">
-      <div class="container">
-        <p>© 2026 AVE学习中心. All rights reserved.</p>
-      </div>
-    </footer>
   </div>
 </template>
 
@@ -151,53 +130,6 @@ watch(() => route.params.id, () => {
 <style scoped>
 .article-detail-page {
   min-height: 100vh;
-}
-
-.site-header {
-  background: #fff;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.logo-icon {
-  font-size: 24px;
-}
-
-.logo-text {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1a2e;
-}
-
-.header-nav {
-  display: flex;
-  gap: 24px;
-}
-
-.header-nav a {
-  font-size: 15px;
-  color: #606266;
-  transition: color 0.3s;
-}
-
-.header-nav a:hover {
-  color: #409EFF;
 }
 
 .detail-container {
@@ -458,14 +390,6 @@ watch(() => route.params.id, () => {
 .recommend-views {
   font-size: 12px;
   color: #909399;
-}
-
-.site-footer {
-  background: #1a1a2e;
-  color: #909399;
-  text-align: center;
-  padding: 24px 0;
-  font-size: 14px;
 }
 
 @media (max-width: 900px) {
