@@ -18,13 +18,12 @@
     </section>
     <!-- 轮播图 -->
     <section class="carousel-section" v-if="carousels.length">
-      <el-carousel :interval="5000" arrow="always" height="400px">
+      <el-carousel :interval="5000" height="280px">
         <el-carousel-item v-for="item in carousels" :key="item.id">
           <div class="carousel-card" :style="{ backgroundImage: item.image ? `url(${resolveUploadUrl(item.image)})` : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }"
                @click="goArticle(item.article_id)">
             <div class="carousel-overlay">
               <div class="carousel-content">
-                <div class="carousel-badge">精选课程</div>
                 <h2 class="carousel-title">{{ item.title }}</h2>
                 <p class="carousel-subtitle">{{ item.subtitle }}</p>
               </div>
@@ -245,7 +244,7 @@ onMounted(() => {
 }
 
 .category-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #303133;
 }
@@ -312,7 +311,7 @@ onMounted(() => {
 }
 
 .featured-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #1a1a2e;
   margin-bottom: 12px;
@@ -356,7 +355,7 @@ onMounted(() => {
   }
 
   .carousel-title {
-    font-size: 22px;
+    font-size: 18px;
   }
 }
 </style>
