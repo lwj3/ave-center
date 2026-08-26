@@ -247,14 +247,14 @@ exports.homeData = async (req, res, next) => {
       limit: 10,
     });
 
-    // 热门文章
+    // 热门文章 - 从"热门内容"分类获取
     const hotArticles = await Article.findAll({
-      where: { status: 1 },
+      where: { status: 1, category_id: 5 },
       include: [
         { model: Category, as: 'category', attributes: ['id', 'name'] },
         { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
       ],
-      order: [['view_count', 'DESC']],
+      order: [['created_at', 'DESC']],
       limit: 10,
     });
 
