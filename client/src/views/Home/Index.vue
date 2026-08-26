@@ -44,7 +44,7 @@
             class="featured-card"
             @click="goArticle(article.id)"
           >
-            <div class="featured-thumb" :style="{ backgroundImage: `url(${article.featured_image ? resolveUploadUrl(article.featured_image) : article.cover_image ? resolveUploadUrl(article.cover_image) : '/default.png'})` }">
+            <div class="featured-thumb" :style="{ backgroundImage: `url(${article.featured_image ? resolveUploadUrl(article.featured_image) : article.cover_image ? resolveUploadUrl(article.cover_image) : defaultImg})` }">
               <div v-if="article.video_url" class="play-icon">▶</div>
             </div>
             <div class="featured-info">
@@ -75,7 +75,7 @@
             class="featured-card"
             @click="goArticle(article.id)"
           >
-            <div class="featured-thumb" :style="{ backgroundImage: `url(${article.cover_image ? resolveUploadUrl(article.cover_image) : '/default.png'})` }">
+            <div class="featured-thumb" :style="{ backgroundImage: `url(${article.cover_image ? resolveUploadUrl(article.cover_image) : defaultImg})` }">
               <div v-if="article.video_url" class="play-icon">▶</div>
             </div>
             <div class="featured-info">
@@ -101,6 +101,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getHomeData, getArticles } from '../../api'
 import { resolveUploadUrl } from '../../utils/uploadUrl'
+import defaultImg from '../../assets/default.png'
 
 const router = useRouter()
 const carousels = ref([])

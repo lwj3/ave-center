@@ -57,7 +57,7 @@
                 class="recommend-item"
                 @click="$router.push(`/article/${item.id}`)"
               >
-                <div class="recommend-thumb" :style="{ backgroundImage: `url(${item.cover_image ? resolveUploadUrl(item.cover_image) : '/default.png'})` }"></div>
+                <div class="recommend-thumb" :style="{ backgroundImage: `url(${item.cover_image ? resolveUploadUrl(item.cover_image) : defaultImg})` }"></div>
                 <div class="recommend-info">
                   <h4 class="recommend-title">{{ item.title }}</h4>
                   <span class="recommend-views">👁 {{ item.view_count }}</span>
@@ -81,6 +81,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticleDetail } from '../../api'
 import { resolveUploadUrl, resolveHtmlUploadUrls } from '../../utils/uploadUrl'
+import defaultImg from '../../assets/default.png'
 
 const route = useRoute()
 const article = ref(null)
