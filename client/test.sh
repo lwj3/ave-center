@@ -21,7 +21,7 @@ git init;
 git checkout -b master
 git add -A;
 git commit -m 'deploy';
-git remote add lefter git@github.com:ave-lefter/ave-lefter.github.io.git
+git remote add lefter git@github.com:ave-center/ave-center.github.io.git
 git push -f lefter master:master;
 
 cd -

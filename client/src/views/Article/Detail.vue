@@ -57,7 +57,7 @@
                 class="recommend-item"
                 @click="$router.push(`/article/${item.id}`)"
               >
-                <div class="recommend-thumb" :style="item.cover_image ? { backgroundImage: `url(${resolveUploadUrl(item.cover_image)})` } : {}"></div>
+                <div class="recommend-thumb" :style="{ backgroundImage: `url(${item.cover_image ? resolveUploadUrl(item.cover_image) : '/default.png'})` }"></div>
                 <div class="recommend-info">
                   <h4 class="recommend-title">{{ item.title }}</h4>
                   <span class="recommend-views">👁 {{ item.view_count }}</span>

@@ -44,7 +44,7 @@
             class="featured-card"
             @click="goArticle(article.id)"
           >
-            <div class="featured-thumb" :style="article.featured_image ? { backgroundImage: `url(${resolveUploadUrl(article.featured_image)})` } : article.cover_image ? { backgroundImage: `url(${resolveUploadUrl(article.cover_image)})` } : {}">
+            <div class="featured-thumb" :style="{ backgroundImage: `url(${article.featured_image ? resolveUploadUrl(article.featured_image) : article.cover_image ? resolveUploadUrl(article.cover_image) : '/default.png'})` }">
               <div v-if="article.video_url" class="play-icon">▶</div>
             </div>
             <div class="featured-info">
@@ -75,7 +75,7 @@
             class="featured-card"
             @click="goArticle(article.id)"
           >
-            <div class="featured-thumb" :style="article.cover_image ? { backgroundImage: `url(${resolveUploadUrl(article.cover_image)})` } : {}">
+            <div class="featured-thumb" :style="{ backgroundImage: `url(${article.cover_image ? resolveUploadUrl(article.cover_image) : '/default.png'})` }">
               <div v-if="article.video_url" class="play-icon">▶</div>
             </div>
             <div class="featured-info">
