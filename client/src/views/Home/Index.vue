@@ -354,6 +354,9 @@ onBeforeUnmount(() => {
 .tag-pill:hover {
   opacity: 0.7;
 }
+.hot-section{
+  padding-bottom: 30px;
+}
 
 @media (max-width: 768px) {
   .category-icon img {
