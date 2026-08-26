@@ -245,7 +245,7 @@ onMounted(async () => {
   width: 140px;
   height: 80px;
   background: #1a1a2e3d;
-  background-size: cover;
+  background-size: 100%;
   background-position: center;
   position: relative;
   flex-shrink: 0;

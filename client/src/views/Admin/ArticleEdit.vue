@@ -103,7 +103,7 @@
               <el-switch v-model="form.is_featured" :active-value="1" :inactive-value="0" />
             </el-form-item>
 
-            <el-form-item label="推荐文章">
+            <el-form-item label="精选文章">
               <el-switch v-model="form.is_recommended" :active-value="1" :inactive-value="0" />
             </el-form-item>
           </el-col>

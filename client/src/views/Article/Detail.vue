@@ -49,7 +49,7 @@
         <aside class="article-sidebar">
           <!-- 推荐文章 -->
           <div class="sidebar-card" v-if="recommended.length">
-            <h3 class="sidebar-title">推荐阅读</h3>
+            <h3 class="sidebar-title">精选文章</h3>
             <div class="recommend-list">
               <div
                 v-for="item in recommended"

@@ -18,7 +18,7 @@
     </section>
     <!-- 轮播图 -->
     <section class="carousel-section" v-if="carousels.length">
-      <el-carousel :interval="5000" height="280px">
+      <el-carousel :interval="5000" :height="carouselHeight">
         <el-carousel-item v-for="item in carousels" :key="item.id">
           <div class="carousel-card" :style="{ backgroundImage: item.image ? `url(${resolveUploadUrl(item.image)})` : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }"
                @click="goArticle(item.article_id)">
@@ -97,7 +97,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { getHomeData, getArticles } from '../../api'
 import { resolveUploadUrl } from '../../utils/uploadUrl'
@@ -108,6 +108,11 @@ const carousels = ref([])
 const categories = ref([])
 const featured = ref([])
 const hotArticles = ref([])
+
+const windowWidth = ref(window.innerWidth)
+const carouselHeight = computed(() => windowWidth.value <= 768 ? '200px' : '480px')
+
+const onResize = () => { windowWidth.value = window.innerWidth }
 
 const loadHomeData = async () => {
   try {
@@ -152,7 +157,12 @@ const loadMore = () => {
 }
 
 onMounted(() => {
+  window.addEventListener('resize', onResize)
   loadHomeData()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', onResize)
 })
 </script>
 
@@ -168,7 +178,7 @@ onMounted(() => {
 
 .carousel-card {
   height: 100%;
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center;
   display: flex;
   align-items: flex-end;
@@ -279,7 +289,7 @@ onMounted(() => {
   width: 140px;
   height: 80px;
   background: #1a1a2e3d;
-  background-size: cover;
+  background-size: 100%;
   background-position: center;
   position: relative;
   flex-shrink: 0;
