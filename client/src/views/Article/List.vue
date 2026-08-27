@@ -1,20 +1,21 @@
 <template>
   <div class="article-list-page">
+    <div class="nav">
+      <el-button link @click="$router.push('/')" class="back-btn">
+        <el-icon><ArrowLeft /></el-icon>返回
+      </el-button>
+      <div class="text">正文</div>
+    </div>
     <div class="container list-container">
       <!-- 筛选标题 -->
       <div class="filter-bar">
         <div class="filter-left">
-          <el-button link @click="$router.push('/')" class="back-btn">
-            <el-icon><ArrowLeft /></el-icon>
-            返回首页
-          </el-button>
           <h2 class="filter-title">
-            <span v-if="categoryName">分类：{{ categoryName }}</span>
-            <span v-else-if="tagName">标签：{{ tagName }}</span>
+            <span v-if="categoryName">{{ categoryName }}</span>
+            <span v-else-if="tagName">{{ tagName }}</span>
             <span v-else>全部文章</span>
           </h2>
         </div>
-        <span class="article-count">共 {{ total }} 篇</span>
       </div>
 
       <!-- 子分类筛选 -->
@@ -52,13 +53,18 @@
               <div>
                 <span v-for="tag in (article.tags || []).slice(0, 3)" :key="tag.id"
                   class="tag-pill"
-                  :style="{ color: tag.color, backgroundColor: tag.color + '18' }"
+                  :style="{ color: tag.color, border: '1px solid ' + tag.color }"
                   @click.stop="$router.push(`/articles?tag_id=${tag.id}&tag_name=${encodeURIComponent(tag.name)}`)"
                 >
-                  {{ tag.name }}
+                  #{{ tag.name }}
                 </span>
               </div>
-              <span class="featured-views">👁 &nbsp;{{ formatCount(article.view_count) }}</span>
+              <span class="featured-views">
+                <svg width="13" height="9" viewBox="0 0 13 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M6.43701 2.37513C7.48623 2.48549 8.33445 3.40056 8.33484 4.47367L8.32409 4.68604C8.22117 5.66558 7.41652 6.47007 6.43701 6.57311L6.22465 6.58386C5.15127 6.58366 4.23628 5.73548 4.12611 4.68604L4.11536 4.47367C4.11577 3.32907 5.07997 2.36459 6.22465 2.36438L6.43701 2.37513Z" fill="#BAC2CD"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M6.22461 0C7.94877 0 9.50115 0.485949 10.625 1.28711C11.7489 2.08839 12.4492 3.20964 12.4492 4.47461C12.4491 5.73951 11.7489 6.86082 10.625 7.66211C9.50116 8.46328 7.94873 8.94922 6.22461 8.94922C4.50049 8.94922 2.94806 8.46328 1.82422 7.66211C0.700321 6.86082 6.97775e-05 5.73951 0 4.47461C0 3.20964 0.700291 2.08839 1.82422 1.28711C2.94807 0.485949 4.50045 0 6.22461 0ZM6.22461 0.986328C4.79807 0.986328 3.50537 1.37596 2.57227 1.99805C1.63834 2.6207 1.0743 3.46838 1.07422 4.38672C1.07422 5.30512 1.6383 6.15274 2.57227 6.77539C3.50538 7.39746 4.79802 7.78711 6.22461 7.78711C7.6512 7.78711 8.94384 7.39746 9.87695 6.77539C10.8109 6.15274 11.375 5.30512 11.375 4.38672C11.3749 3.46838 10.8109 2.6207 9.87695 1.99805C8.94385 1.37596 7.65115 0.986328 6.22461 0.986328Z" fill="#838A94"/>
+                </svg>
+                {{ formatCount(article.view_count) }}</span>
             </div>
           </div>
         </div>
@@ -178,15 +184,30 @@ onMounted(async () => {
   min-height: 100vh;
 }
 .list-container {
-  padding-top: 24px;
-  padding-bottom: 40px;
+  padding-top: 20px;
+  padding-bottom: 30px;
+}
+
+.nav{
+  display: flex;
+  align-items: center;
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid #ebeef5;
+}
+.nav .text{
+  text-align: center;
+  width: 100%;
+  font-size: 18px;
+  display: none;
+  font-weight: 600;
 }
 
 .filter-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
+  margin-left: 2px;
 }
 
 .filter-left {
@@ -208,8 +229,7 @@ onMounted(async () => {
   font-size: 22px;
   font-weight: 700;
   color: #1a1a2e;
-  padding-left: 12px;
-  border-left: 4px solid #409EFF;
+  margin-left: 2px;
 }
 
 .sub-category-bar {
@@ -218,16 +238,21 @@ onMounted(async () => {
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
-
-.article-count {
+ .sub-category-bar button {
+  padding: 10px 12px;
   font-size: 14px;
-  color: #909399;
+  border-radius: 122px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-left: 0px;
+  margin-right: 4px;
 }
+
 
 .featured-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
 }
 
 .featured-card {
@@ -300,11 +325,12 @@ onMounted(async () => {
 
 .tag-pill {
   font-size: 12px;
-  padding: 2px 8px;
+  padding: 4px 6px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
   flex-shrink: 0;
+  margin-right: 4px;
 }
 
 .tag-pill:hover {

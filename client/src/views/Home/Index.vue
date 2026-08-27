@@ -18,7 +18,7 @@
     </section>
     <!-- 轮播图 -->
     <section class="carousel-section" v-if="carousels.length">
-      <el-carousel :interval="5000" :height="carouselHeight">
+      <el-carousel :interval="5000" :height="carouselHeight" indicator-position="none" class="carousel">
         <el-carousel-item v-for="item in carousels" :key="item.id">
           <div class="carousel-card" :style="{ backgroundImage: item.image ? `url(${resolveUploadUrl(item.image)})` : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }"
                @click="goArticle(item.article_id)">
@@ -51,11 +51,19 @@
               <h3 class="featured-title">{{ article.featured_title || article.title }}</h3>
               <div class="featured-meta">
                 <div>
-                  <span v-if="article.tags.length" class="tag-pill" :style="{ color: article.tags[0].color, backgroundColor: article.tags[0].color + '18' }" @click.stop="goTag(article.tags[0])">
-                    {{ article.tags[0].name }}
+                  <span v-if="article.tags.length" class="tag-pill" 
+                  :style="{ color: article.tags[0].color, border: '1px solid ' + article.tags[0].color }" 
+
+                  @click.stop="goTag(article.tags[0])">
+                    #{{ article.tags[0].name }}
                   </span>
                 </div>
-                <span class="featured-views">👁 &nbsp;{{ formatCount(article.view_count) }}</span>
+                <span class="featured-views">
+                  <svg width="13" height="9" viewBox="0 0 13 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6.43701 2.37513C7.48623 2.48549 8.33445 3.40056 8.33484 4.47367L8.32409 4.68604C8.22117 5.66558 7.41652 6.47007 6.43701 6.57311L6.22465 6.58386C5.15127 6.58366 4.23628 5.73548 4.12611 4.68604L4.11536 4.47367C4.11577 3.32907 5.07997 2.36459 6.22465 2.36438L6.43701 2.37513Z" fill="#BAC2CD"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6.22461 0C7.94877 0 9.50115 0.485949 10.625 1.28711C11.7489 2.08839 12.4492 3.20964 12.4492 4.47461C12.4491 5.73951 11.7489 6.86082 10.625 7.66211C9.50116 8.46328 7.94873 8.94922 6.22461 8.94922C4.50049 8.94922 2.94806 8.46328 1.82422 7.66211C0.700321 6.86082 6.97775e-05 5.73951 0 4.47461C0 3.20964 0.700291 2.08839 1.82422 1.28711C2.94807 0.485949 4.50045 0 6.22461 0ZM6.22461 0.986328C4.79807 0.986328 3.50537 1.37596 2.57227 1.99805C1.63834 2.6207 1.0743 3.46838 1.07422 4.38672C1.07422 5.30512 1.6383 6.15274 2.57227 6.77539C3.50538 7.39746 4.79802 7.78711 6.22461 7.78711C7.6512 7.78711 8.94384 7.39746 9.87695 6.77539C10.8109 6.15274 11.375 5.30512 11.375 4.38672C11.3749 3.46838 10.8109 2.6207 9.87695 1.99805C8.94385 1.37596 7.65115 0.986328 6.22461 0.986328Z" fill="#838A94"/>
+                  </svg>
+                  {{ formatCount(article.view_count) }}</span>
               </div>
             </div>
           </div>
@@ -82,11 +90,18 @@
               <h3 class="featured-title">{{ article.title }}</h3>
               <div class="featured-meta">
                 <div>
-                  <span v-if="article.tags.length" class="tag-pill" :style="{ color: article.tags[0].color, backgroundColor: article.tags[0].color + '18' }" @click.stop="goTag(article.tags[0])">
-                    {{ article.tags[0].name }}
+                  <span v-if="article.tags.length" class="tag-pill" 
+                  :style="{ color: article.tags[0].color, border: '1px solid ' + article.tags[0].color }" 
+                  @click.stop="goTag(article.tags[0])">
+                    #{{ article.tags[0].name }}
                   </span>
                 </div>
-                <span class="featured-views">👁 &nbsp;{{ formatCount(article.view_count) }}</span>
+                <span class="featured-views">
+                  <svg width="13" height="9" viewBox="0 0 13 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6.43701 2.37513C7.48623 2.48549 8.33445 3.40056 8.33484 4.47367L8.32409 4.68604C8.22117 5.66558 7.41652 6.47007 6.43701 6.57311L6.22465 6.58386C5.15127 6.58366 4.23628 5.73548 4.12611 4.68604L4.11536 4.47367C4.11577 3.32907 5.07997 2.36459 6.22465 2.36438L6.43701 2.37513Z" fill="#BAC2CD"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6.22461 0C7.94877 0 9.50115 0.485949 10.625 1.28711C11.7489 2.08839 12.4492 3.20964 12.4492 4.47461C12.4491 5.73951 11.7489 6.86082 10.625 7.66211C9.50116 8.46328 7.94873 8.94922 6.22461 8.94922C4.50049 8.94922 2.94806 8.46328 1.82422 7.66211C0.700321 6.86082 6.97775e-05 5.73951 0 4.47461C0 3.20964 0.700291 2.08839 1.82422 1.28711C2.94807 0.485949 4.50045 0 6.22461 0ZM6.22461 0.986328C4.79807 0.986328 3.50537 1.37596 2.57227 1.99805C1.63834 2.6207 1.0743 3.46838 1.07422 4.38672C1.07422 5.30512 1.6383 6.15274 2.57227 6.77539C3.50538 7.39746 4.79802 7.78711 6.22461 7.78711C7.6512 7.78711 8.94384 7.39746 9.87695 6.77539C10.8109 6.15274 11.375 5.30512 11.375 4.38672C11.3749 3.46838 10.8109 2.6207 9.87695 1.99805C8.94385 1.37596 7.65115 0.986328 6.22461 0.986328Z" fill="#838A94"/>
+                  </svg>
+                  &nbsp;{{ formatCount(article.view_count) }}</span>
               </div>
             </div>
           </div>
@@ -171,6 +186,10 @@ onBeforeUnmount(() => {
   min-height: 100vh;
 }
 
+.carousel{
+  margin: 0 20px;
+  border-radius: 16px;
+}
 /* 轮播 */
 .carousel-section {
   margin-bottom: 30px;
@@ -186,8 +205,8 @@ onBeforeUnmount(() => {
 }
 
 .carousel-overlay {
-  padding: 40px 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  padding: 20px 0;
+  background: rgba(0, 0, 0, 0.4);
   width: 100%;
   color: #fff;
 }
@@ -210,7 +229,6 @@ onBeforeUnmount(() => {
 .carousel-title {
   font-size: 32px;
   font-weight: 700;
-  margin-bottom: 8px;
 }
 
 .carousel-subtitle {
@@ -344,11 +362,11 @@ onBeforeUnmount(() => {
 
 .tag-pill {
   font-size: 12px;
-  padding: 2px 8px;
+  padding: 4px 6px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
-  flex-shrink: 0;
+  margin-right: 4px;
 }
 
 .tag-pill:hover {
