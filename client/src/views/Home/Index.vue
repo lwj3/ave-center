@@ -1,7 +1,7 @@
 <template>
   <div class="home-page">
     <!-- 分类导航 -->
-    <section class="category-section">
+    <section class="container category-section ">
       <div class="category-grid">
         <div
           v-for="cat in categories.filter(c => !c.parent_id)"
@@ -17,9 +17,9 @@
       </div>
     </section>
     <!-- 轮播图 -->
-    <section class="carousel-section" v-if="carousels.length">
-      <el-carousel :interval="5000" :height="carouselHeight" indicator-position="none" class="carousel">
-        <el-carousel-item v-for="item in carousels" :key="item.id">
+    <section class="carousel-section container" v-if="carousels.length">
+      <el-carousel :interval="5000" :height="carouselHeight" indicator-position="none">
+        <el-carousel-item v-for="item in carousels" :key="item.id" style="border-radius: 16px;">
           <div class="carousel-card" :style="{ backgroundImage: item.image ? `url(${resolveUploadUrl(item.image)})` : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }"
                @click="goArticle(item.article_id)">
             <div class="carousel-overlay">
@@ -186,10 +186,6 @@ onBeforeUnmount(() => {
   min-height: 100vh;
 }
 
-.carousel{
-  margin: 0 20px;
-  border-radius: 16px;
-}
 /* 轮播 */
 .carousel-section {
   margin-bottom: 30px;
@@ -202,6 +198,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: flex-end;
   cursor: pointer;
+  border-radius: 16px;
 }
 
 .carousel-overlay {
@@ -240,6 +237,7 @@ onBeforeUnmount(() => {
 .category-section {
   margin-bottom: 10px;
   margin-top: 20px;
+  padding: 0;
 }
 
 .category-grid {
@@ -284,7 +282,7 @@ onBeforeUnmount(() => {
 
 /* 精选 */
 .featured-section {
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .featured-list {

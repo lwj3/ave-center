@@ -12,7 +12,7 @@
         <div class="filter-left">
           <h2 class="filter-title">
             <span v-if="categoryName">{{ categoryName }}</span>
-            <span v-else-if="tagName">{{ tagName }}</span>
+            <span v-else-if="tagName">#{{ tagName }}</span>
             <span v-else>全部文章</span>
           </h2>
         </div>
