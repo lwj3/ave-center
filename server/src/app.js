@@ -73,8 +73,8 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// 静态文件
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// 静态文件（uploads 需要 CORS 头，因为前端可能部署在不同域名）
+app.use('/uploads', cors(), express.static(path.join(__dirname, '../uploads')));
 
 // API路由
 app.use('/api/auth', authLimiter, authRoutes);

@@ -78,7 +78,7 @@
         </h2>
         <div class="featured-list">
           <div
-            v-for="article in hotArticles"
+            v-for="article in hotArticles.slice(0, 4)"
             :key="article.id"
             class="featured-card"
             @click="goArticle(article.id)"
