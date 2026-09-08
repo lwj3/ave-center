@@ -340,7 +340,7 @@ onBeforeUnmount(() => {
   font-size: 16px;
   font-weight: 700;
   color: #1a1a2e;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
