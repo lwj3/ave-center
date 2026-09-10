@@ -324,13 +324,13 @@ onMounted(async () => {
 }
 
 .tag-pill {
-  font-size: 12px;
-  padding: 4px 6px;
+  font-size: 11px;
+  padding: 3px 4px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
   flex-shrink: 0;
-  margin-right: 4px;
+  margin-right: 3px;
 }
 
 .tag-pill:hover {
