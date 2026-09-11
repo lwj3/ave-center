@@ -63,6 +63,10 @@ html.dark .article-detail-page .nav {
   background: #21262F;
   border-bottom-color: #333;
 }
+html.dark .article-content p *, 
+html.dark .article-content *  {
+  color: #fff !important;
+}
 
 html.dark .article-main {
   background: #21262F;

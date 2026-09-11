@@ -1,8 +1,20 @@
 <template>
   <div class="home-page">
     <!-- 分类导航 -->
-    <section class="container category-section ">
-      <div class="category-grid">
+    <section class="container category-section">
+      <div v-if="loading" class="category-grid">
+        <div v-for="i in 5" :key="'sk-cat-' + i" class="category-card skeleton-card">
+          <el-skeleton animated>
+            <template #template>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                <el-skeleton-item variant="circle" style="width:60px;height:60px;" />
+                <el-skeleton-item variant="text" style="width:50px;height:14px;" />
+              </div>
+            </template>
+          </el-skeleton>
+        </div>
+      </div>
+      <div v-else class="category-grid">
         <div
           v-for="cat in categories.filter(c => !c.parent_id)"
           :key="cat.id"
@@ -17,7 +29,7 @@
       </div>
     </section>
     <!-- 轮播图 -->
-    <section class="carousel-section container" v-if="carousels.length">
+    <section class="carousel-section container" v-if="!loading && carousels.length">
       <el-carousel :interval="5000" :height="carouselHeight" indicator-position="none">
         <el-carousel-item v-for="item in carousels" :key="item.id" style="border-radius: 16px;">
           <div class="carousel-card" :style="{ backgroundImage: item.image ? `url(${resolveUploadUrl(item.image)})` : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }"
@@ -32,10 +44,17 @@
         </el-carousel-item>
       </el-carousel>
     </section>
+    <section v-else-if="loading" class="carousel-section container">
+      <el-skeleton animated>
+        <template #template>
+          <el-skeleton-item variant="image" style="width:100%;height:480px;border-radius:16px;" />
+        </template>
+      </el-skeleton>
+    </section>
 
     <div class="container">
       <!-- 精选文章（推荐到首页的） -->
-      <section class="featured-section" v-if="featured.length">
+      <section class="featured-section" v-if="!loading && featured.length">
         <h2 class="section-title">课程精选</h2>
         <div class="featured-list">
           <div
@@ -69,9 +88,27 @@
           </div>
         </div>
       </section>
+      <section v-else-if="loading" class="featured-section">
+        <el-skeleton animated>
+          <template #template>
+            <el-skeleton-item variant="text" style="width:120px;height:22px;margin-bottom:15px;" />
+            <div class="featured-list">
+              <div v-for="i in 4" :key="'sk-f-' + i" class="featured-card skeleton-card">
+                <div style="display:flex;gap:12px;width:100%;">
+                  <el-skeleton-item variant="image" style="width:140px;height:80px;border-radius:12px;flex-shrink:0;" />
+                  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;">
+                    <el-skeleton-item variant="text" style="width:70%;height:18px;" />
+                    <el-skeleton-item variant="text" style="width:40%;height:14px;" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </el-skeleton>
+      </section>
 
       <!-- 热门内容 -->
-      <section class="hot-section">
+      <section class="hot-section" v-if="!loading">
         <h2 class="section-title">
           热门内容
           <span class="more-link" @click="loadMore">更多 ›</span>
@@ -107,6 +144,24 @@
           </div>
         </div>
       </section>
+      <section v-else class="hot-section">
+        <el-skeleton animated>
+          <template #template>
+            <el-skeleton-item variant="text" style="width:120px;height:22px;margin-bottom:15px;" />
+            <div class="featured-list">
+              <div v-for="i in 4" :key="'sk-h-' + i" class="featured-card skeleton-card">
+                <div style="display:flex;gap:12px;width:100%;">
+                  <el-skeleton-item variant="image" style="width:140px;height:80px;border-radius:12px;flex-shrink:0;" />
+                  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;">
+                    <el-skeleton-item variant="text" style="width:70%;height:18px;" />
+                    <el-skeleton-item variant="text" style="width:40%;height:14px;" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </el-skeleton>
+      </section>
     </div>
   </div>
 </template>
@@ -119,6 +174,7 @@ import { resolveUploadUrl } from '../../utils/uploadUrl'
 import defaultImg from '../../assets/default.png'
 
 const router = useRouter()
+const loading = ref(true)
 const carousels = ref([])
 const categories = ref([])
 const featured = ref([])
@@ -130,6 +186,7 @@ const carouselHeight = computed(() => windowWidth.value <= 768 ? '200px' : '480p
 const onResize = () => { windowWidth.value = window.innerWidth }
 
 const loadHomeData = async () => {
+  loading.value = true
   try {
     const res = await getHomeData()
     if (res.code === 0) {
@@ -140,6 +197,8 @@ const loadHomeData = async () => {
     }
   } catch (err) {
     console.error('加载首页数据失败:', err)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -371,6 +430,11 @@ onBeforeUnmount(() => {
 }
 .hot-section{
   padding-bottom: 30px;
+}
+
+.skeleton-card {
+  cursor: default;
+  pointer-events: none;
 }
 
 @media (max-width: 768px) {

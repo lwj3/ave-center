@@ -31,7 +31,22 @@
       </div>
 
       <!-- 文章列表 -->
-      <div v-loading="loading" class="featured-list">
+      <div class="featured-list">
+        <!-- 骨架屏 -->
+        <div v-if="loading" v-for="i in 5" :key="'sk-' + i" class="featured-card skeleton-card">
+          <el-skeleton animated>
+            <template #template>
+              <div style="display:flex;gap:12px;width:100%;">
+                <el-skeleton-item variant="image" style="width:140px;height:80px;border-radius:12px;flex-shrink:0;" />
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;">
+                  <el-skeleton-item variant="text" style="width:70%;height:18px;" />
+                  <el-skeleton-item variant="text" style="width:40%;height:14px;" />
+                </div>
+              </div>
+            </template>
+          </el-skeleton>
+        </div>
+        <template v-else>
         <div
           v-for="article in articles"
           :key="article.id"
@@ -62,8 +77,9 @@
             </div>
           </div>
         </div>
+        </template>
 
-        <el-empty v-if="!loading && articles.length === 0" description="暂无文章" />
+        <el-empty v-if="loaded && articles.length === 0" description="暂无文章" />
       </div>
 
       <!-- 滚动加载提示 -->
@@ -86,6 +102,7 @@ const route = useRoute()
 const articles = ref([])
 const loading = ref(false)
 const scrollLoading = ref(false)
+const loaded = ref(false)
 const page = ref(1)
 const pageSize = ref(15)
 const total = ref(0)
@@ -128,6 +145,7 @@ const selectSubCategory = (subId) => {
 const loadArticles = async (append = false) => {
   if (scrollLoading.value) return
   scrollLoading.value = true
+  if (!append) loading.value = true
   try {
     const params = {
       page: page.value,
@@ -151,6 +169,7 @@ const loadArticles = async (append = false) => {
       total.value = res.data.total
       hasMore.value = articles.value.length < total.value
       if (hasMore.value) page.value++
+      loaded.value = true
     }
   } catch (err) {
     console.error('加载文章失败:', err)
@@ -283,6 +302,11 @@ onBeforeUnmount(() => {
   cursor: pointer;
   gap: 12px;
   transition: all 0.3s;
+}
+
+.skeleton-card {
+  cursor: default;
+  pointer-events: none;
 }
 
 .featured-thumb {
