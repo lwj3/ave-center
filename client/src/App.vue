@@ -65,7 +65,7 @@ html.dark .article-detail-page .nav {
 }
 
 html.dark .article-main {
-  background: #1a1a1a;
+  background: #21262F;
 }
 
 html.dark .article-title {
@@ -91,7 +91,7 @@ html.dark .article-content :is(code) {
 }
 
 html.dark .sidebar-card {
-  background: #1a1a1a;
+  background: #21262F;
 }
 
 html.dark .sidebar-title {
@@ -112,21 +112,21 @@ html.dark .meta-category {
 }
 
 html.dark .tag-chip {
-  background: #1a1a1a;
+  background: #21262F;
 }
 
 /* 分页暗色 */
 html.dark .el-pagination {
-  --el-pagination-bg-color: #1a1a1a;
+  --el-pagination-bg-color: #21262F;
   --el-pagination-text-color: #fff;
-  --el-pagination-button-bg-color: #1a1a1a;
+  --el-pagination-button-bg-color: #21262F;
   --el-pagination-button-color: #fff;
   --el-pagination-hover-color: #409EFF;
   --el-pagination-disabled-color: #666;
 }
 
 html.dark .el-pagination .el-pager li {
-  background: #1a1a1a;
+  background: #21262F;
   color: #fff;
 }
 
@@ -136,16 +136,16 @@ html.dark .el-pagination .el-pager li.is-active {
 
 html.dark .el-pagination .btn-prev,
 html.dark .el-pagination .btn-next {
-  background: #1a1a1a;
+  background: #21262F;
   color: #fff;
 }
 
 html.dark .el-pagination .el-select .el-input__wrapper {
-  background: #1a1a1a;
+  background: #21262F;
 }
 
 html.dark .el-pagination .el-input__wrapper {
-  background: #1a1a1a;
+  background: #21262F;
 }
 
 html.dark .el-pagination .el-select-dropdown__item.selected {

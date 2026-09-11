@@ -147,18 +147,20 @@ watch(() => route.params.id, () => {
   display: flex;
   align-items: center;
   padding: 20px 20px;
+  height: 50px;
   border-bottom: 1px solid #ebeef5;
   position: fixed;
   top: 0;
   width: 100%;
   background: #fff;
-
 }
 .nav .text{
   text-align: center;
-  width: 100%;
   font-size: 18px;
   font-weight: 600;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 .detail-container {
   display: flex;
@@ -421,7 +423,7 @@ watch(() => route.params.id, () => {
 @media (max-width: 900px) {
   .detail-container {
     flex-direction: column;
-    margin-top: 30px;
+    margin-top: 20px;
   }
 
   .article-sidebar {

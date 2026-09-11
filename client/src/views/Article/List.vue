@@ -21,12 +21,6 @@
       <!-- 子分类筛选 -->
       <div v-if="subCategories.length" class="sub-category-bar">
         <el-button
-          :type="!activeSubCategoryId ? 'primary' : 'default'"
-          @click="selectSubCategory(null)"
-        >
-          全部
-        </el-button>
-        <el-button
           v-for="sub in subCategories"
           :key="sub.id"
           :type="activeSubCategoryId === sub.id ? 'primary' : 'default'"
@@ -72,24 +66,17 @@
         <el-empty v-if="!loading && articles.length === 0" description="暂无文章" />
       </div>
 
-      <!-- 分页 -->
-      <div class="pagination-wrapper" v-if="total > pageSize">
-        <el-pagination
-          v-model:current-page="page"
-          v-model:page-size="pageSize"
-          :total="total"
-          :page-sizes="[10, 20, 30]"
-          layout="total, sizes, prev, pager, next"
-          @size-change="loadArticles"
-          @current-change="loadArticles"
-        />
+      <!-- 滚动加载提示 -->
+      <div class="scroll-loading" v-if="articles.length > 0">
+        <div v-if="scrollLoading" class="loading-text">加载中...</div>
+        <div v-else-if="!hasMore" class="loading-text">没有更多了</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticles, getCategories } from '../../api'
 import { resolveUploadUrl } from '../../utils/uploadUrl'
@@ -98,9 +85,11 @@ import defaultImg from '../../assets/default.png'
 const route = useRoute()
 const articles = ref([])
 const loading = ref(false)
+const scrollLoading = ref(false)
 const page = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(15)
 const total = ref(0)
+const hasMore = ref(true)
 
 const categoryName = ref(route.query.category_name || '')
 const tagName = ref(route.query.tag_name || '')
@@ -118,6 +107,10 @@ const loadSubCategories = async () => {
     if (res.code === 0) {
       const parent = res.data.find(c => c.id === parseInt(route.query.category_id))
       subCategories.value = parent?.children || []
+      // 自动选中第一个子分类
+      if (subCategories.value.length && !activeSubCategoryId.value) {
+        activeSubCategoryId.value = subCategories.value[0].id
+      }
     }
   } catch (err) {
     console.error('加载子分类失败:', err)
@@ -127,11 +120,14 @@ const loadSubCategories = async () => {
 const selectSubCategory = (subId) => {
   activeSubCategoryId.value = subId
   page.value = 1
+  articles.value = []
+  hasMore.value = true
   loadArticles()
 }
 
-const loadArticles = async () => {
-  loading.value = true
+const loadArticles = async (append = false) => {
+  if (scrollLoading.value) return
+  scrollLoading.value = true
   try {
     const params = {
       page: page.value,
@@ -147,13 +143,30 @@ const loadArticles = async () => {
 
     const res = await getArticles(params)
     if (res.code === 0) {
-      articles.value = res.data.list
+      if (append) {
+        articles.value = [...articles.value, ...res.data.list]
+      } else {
+        articles.value = res.data.list
+      }
       total.value = res.data.total
+      hasMore.value = articles.value.length < total.value
+      if (hasMore.value) page.value++
     }
   } catch (err) {
     console.error('加载文章失败:', err)
   } finally {
+    scrollLoading.value = false
     loading.value = false
+  }
+}
+
+// 滚动加载
+const onScroll = () => {
+  const scrollTop = window.scrollY || document.documentElement.scrollTop
+  const scrollHeight = document.documentElement.scrollHeight
+  const clientHeight = document.documentElement.clientHeight
+  if (scrollHeight - scrollTop - clientHeight < 200 && hasMore.value && !scrollLoading.value) {
+    loadArticles(true)
   }
 }
 
@@ -171,11 +184,16 @@ watch(() => route.query, async (newQuery) => {
   page.value = 1
   await loadSubCategories()
   loadArticles()
-})
+}, { immediate: false })
 
 onMounted(async () => {
+  window.addEventListener('scroll', onScroll)
   await loadSubCategories()
   loadArticles()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll)
 })
 </script>
 
@@ -184,8 +202,7 @@ onMounted(async () => {
   min-height: 100vh;
 }
 .list-container {
-  padding-top: 20px;
-  padding-bottom: 30px;
+  padding: 20px 20px 40px 20px;
 }
 
 .nav{
@@ -193,13 +210,16 @@ onMounted(async () => {
   align-items: center;
   padding: 14px 20px 10px;
   border-bottom: 1px solid #ebeef5;
+  position: relative;
 }
 .nav .text{
   text-align: center;
-  width: 100%;
   font-size: 18px;
   display: none;
   font-weight: 600;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .filter-bar {
@@ -245,7 +265,7 @@ onMounted(async () => {
   cursor: pointer;
   transition: all 0.3s;
   margin-left: 0px;
-  margin-right: 4px;
+  margin-right: 5px;
 }
 
 
@@ -340,10 +360,14 @@ onMounted(async () => {
   flex-shrink: 0;
 }
 
-.pagination-wrapper {
-  margin-top: 24px;
-  display: flex;
-  justify-content: center;
+.scroll-loading {
+  text-align: center;
+  padding: 20px 0 30px;
+}
+
+.loading-text {
+  font-size: 14px;
+  color: #909399;
 }
 
 .site-footer {
