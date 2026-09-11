@@ -52,3 +52,22 @@ a {
 video{
   max-width: 100%;
 }
+
+/* 暗色主题 */
+html.dark,
+html.dark body {
+  background-color: #21262F;
+  color: #fff;
+}
+
+html.dark .section-title {
+  color: #fff;
+}
+
+html.dark .section-title .more-link {
+  color: #aaa;
+}
+
+html.dark .section-title .more-link:hover {
+  color: #409EFF;
+}

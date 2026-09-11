@@ -6,8 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="AVE学习中心 - 产品教程、交易进阶、专题课程" />
     <title>AVE学习中心</title>
+    <style>
+      html.dark { background-color: #21262F; color: #fff; }
+      html.dark body { background-color: #21262F; }
+    </style>
   </head>
   <body>
+    <script>
+      if (new URLSearchParams(window.location.search).get('mode') === 'dark') {
+        document.documentElement.classList.add('dark')
+      }
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

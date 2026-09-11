@@ -258,7 +258,6 @@ onMounted(async () => {
 .featured-card {
   display: flex;
   flex-direction: row;
-  background: #fff;
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;

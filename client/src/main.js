@@ -7,6 +7,12 @@ import router from './router'
 import App from './App.vue'
 import './style.css'
 
+// 检测 URL 参数 mode=dark，启用暗色主题
+const urlParams = new URLSearchParams(window.location.search)
+if (urlParams.get('mode') === 'dark') {
+  document.documentElement.classList.add('dark')
+}
+
 const app = createApp(App)
 
 // 注册所有图标

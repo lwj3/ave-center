@@ -79,6 +79,12 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const adminStore = useAdminStore()
 
+  // 暗色模式：自动保留 mode=dark 参数
+  const isDark = document.documentElement.classList.contains('dark')
+  if (isDark && to.query.mode !== 'dark') {
+    return next({ ...to, query: { ...to.query, mode: 'dark' } })
+  }
+
   // GitHub Pages 404.html 回跳逻辑
   const redirectPath = sessionStorage.getItem('redirect_path')
   if (redirectPath && to.path === '/') {
