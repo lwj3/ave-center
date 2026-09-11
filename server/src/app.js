@@ -22,6 +22,9 @@ const fileRoutes = require('./routes/file');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// 信任反向代理，确保能获取真实客户端 IP
+app.set('trust proxy', true);
+
 // 安全头（禁用 CSP 和 CORP，避免影响跨域图片加载）
 app.use(helmet({
   contentSecurityPolicy: false,
@@ -31,20 +34,23 @@ app.use(helmet({
 // Gzip 压缩响应体
 app.use(compression());
 
-// 全局限流：防止恶意请求洪水
+// 全局限流：按真实客户端 IP 隔离，互不影响
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 分钟窗口
   max: process.env.NODE_ENV === 'production' ? 200 : 500,
+  keyGenerator: (req) => req.ip, // trust proxy 已开启，req.ip 为真实客户端 IP
   message: { code: 429, message: '请求过于频繁，请稍后再试', data: null },
   standardHeaders: true,
   legacyHeaders: false,
 });
+
 app.use(limiter);
 
-// 登录接口单独限流（更严格）
+// 登录接口单独限流（按真实 IP 隔离，更严格）
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
+  keyGenerator: (req) => req.ip,
   message: { code: 429, message: '登录尝试过于频繁，请 15 分钟后再试', data: null },
   standardHeaders: true,
   legacyHeaders: false,
