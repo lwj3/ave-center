@@ -30,8 +30,10 @@
     </section>
     <!-- 轮播图 -->
     <section class="carousel-section container" v-if="!loading && carousels.length">
-      <el-carousel :interval="5000" :height="carouselHeight" indicator-position="none">
-        <el-carousel-item v-for="item in carousels" :key="item.id" style="border-radius: 16px;">
+      <el-carousel ref="carouselRef" :interval="5000" :height="carouselHeight" indicator-position="none">
+        <el-carousel-item v-for="item in carousels" :key="item.id" style="border-radius: 16px;"
+          @touchstart="onTouchStart"
+          @touchend="onTouchEnd">
           <div class="carousel-card" :style="{ backgroundImage: item.image ? `url(${resolveUploadUrl(item.image)})` : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }"
                @click="goArticle(item.article_id)">
             <div class="carousel-overlay">
@@ -179,6 +181,9 @@ const carousels = ref([])
 const categories = ref([])
 const featured = ref([])
 const hotArticles = ref([])
+const carouselRef = ref(null)
+let touchStartX = 0
+let touchStartY = 0
 
 const windowWidth = ref(window.innerWidth)
 const carouselHeight = computed(() => windowWidth.value <= 768 ? '200px' : '480px')
@@ -218,6 +223,25 @@ const goTag = (tag) => {
     path: '/articles',
     query: { tag_id: tag.id, tag_name: tag.name }
   })
+}
+
+const onTouchStart = (e) => {
+  touchStartX = e.touches[0].clientX
+  touchStartY = e.touches[0].clientY
+}
+
+const onTouchEnd = (e) => {
+  const deltaX = e.changedTouches[0].clientX - touchStartX
+  const deltaY = e.changedTouches[0].clientY - touchStartY
+  // 水平滑动距离大于垂直滑动距离且超过阈值，视为左右滑动
+  if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+    e.preventDefault()
+    if (deltaX > 0) {
+      carouselRef.value?.prev()
+    } else {
+      carouselRef.value?.next()
+    }
+  }
 }
 
 const formatCount = (count) => {
@@ -302,11 +326,11 @@ onBeforeUnmount(() => {
 .category-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
+  gap: 2px;
 }
 
 .category-card {
-  padding: 12px 6px;
+  padding: 12px 1px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
@@ -418,7 +442,7 @@ onBeforeUnmount(() => {
 
 .tag-pill {
   font-size: 11px;
-  padding: 3px 4px;
+  padding: 3px 8px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;

@@ -368,7 +368,7 @@ onBeforeUnmount(() => {
 
 .tag-pill {
   font-size: 11px;
-  padding: 3px 4px;
+  padding: 3px 8px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
