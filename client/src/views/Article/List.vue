@@ -222,6 +222,7 @@ onBeforeUnmount(() => {
 }
 .list-container {
   padding: 20px 20px 40px 20px;
+  height: 100vh;
 }
 
 .nav{

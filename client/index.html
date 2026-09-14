@@ -9,12 +9,17 @@
     <style>
       html.dark { background-color: #080A0E; color: #fff; }
       html.dark body { background-color: #080A0E; }
+      html.dark.android { background-color: #21262F; }
+      html.dark.android body { background-color: #21262F; }
     </style>
   </head>
   <body>
     <script>
       if (new URLSearchParams(window.location.search).get('mode') === 'dark') {
         document.documentElement.classList.add('dark')
+        if (/android/i.test(navigator.userAgent)) {
+          document.documentElement.classList.add('android')
+        }
       }
     </script>
     <div id="app"></div>

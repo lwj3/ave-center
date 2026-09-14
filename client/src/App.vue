@@ -14,8 +14,14 @@
 }
 
 /* 暗色主题 */
+html.dark {
+  --bg-dark: #080A0E;
+}
+html.dark.android {
+  --bg-dark: #21262F;
+}
 html.dark #app {
-  background-color: #080A0E;
+  background-color: var(--bg-dark);
   color: #fff;
 }
 
@@ -42,7 +48,7 @@ html.dark .play-icon {
 
 /* 文章列表页暗色 */
 html.dark .nav {
-  background: #080A0E;
+  background: var(--bg-dark);
   border-bottom-color: #333;
 }
 
@@ -60,7 +66,7 @@ html.dark .article-list-page .featured-title {
 
 /* 文章详情页暗色 */
 html.dark .article-detail-page .nav {
-  background: #080A0E;
+  background: var(--bg-dark);
   border-bottom-color: #333;
 }
 html.dark .article-content p *, 
@@ -69,7 +75,7 @@ html.dark .article-content *  {
 }
 
 html.dark .article-main {
-  background: #080A0E;
+  background: var(--bg-dark);
 }
 
 html.dark .article-title {
@@ -95,7 +101,7 @@ html.dark .article-content :is(code) {
 }
 
 html.dark .sidebar-card {
-  background: #080A0E;
+  background: var(--bg-dark);
 }
 
 html.dark .sidebar-title {
@@ -116,21 +122,21 @@ html.dark .meta-category {
 }
 
 html.dark .tag-chip {
-  background: #080A0E;
+  background: var(--bg-dark);
 }
 
 /* 分页暗色 */
 html.dark .el-pagination {
-  --el-pagination-bg-color: #080A0E;
+  --el-pagination-bg-color: var(--bg-dark);
   --el-pagination-text-color: #fff;
-  --el-pagination-button-bg-color: #080A0E;
+  --el-pagination-button-bg-color: var(--bg-dark);
   --el-pagination-button-color: #fff;
   --el-pagination-hover-color: #409EFF;
   --el-pagination-disabled-color: #666;
 }
 
 html.dark .el-pagination .el-pager li {
-  background: #080A0E;
+  background: var(--bg-dark);
   color: #fff;
 }
 
@@ -140,16 +146,16 @@ html.dark .el-pagination .el-pager li.is-active {
 
 html.dark .el-pagination .btn-prev,
 html.dark .el-pagination .btn-next {
-  background: #080A0E;
+  background: var(--bg-dark);
   color: #fff;
 }
 
 html.dark .el-pagination .el-select .el-input__wrapper {
-  background: #080A0E;
+  background: var(--bg-dark);
 }
 
 html.dark .el-pagination .el-input__wrapper {
-  background: #080A0E;
+  background: var(--bg-dark);
 }
 
 html.dark .el-pagination .el-select-dropdown__item.selected {
