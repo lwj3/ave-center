@@ -23,7 +23,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 信任反向代理，确保能获取真实客户端 IP
-app.set('trust proxy', true);
+// 只信任一层代理（宝塔 Nginx），避免伪造 X-Forwarded-For 绕过限流
+app.set('trust proxy', 1);
 
 // 安全头（禁用 CSP 和 CORP，避免影响跨域图片加载）
 app.use(helmet({

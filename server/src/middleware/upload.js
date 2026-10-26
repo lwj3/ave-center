@@ -11,6 +11,11 @@ const imageDir = path.join(uploadDir, 'images');
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
+const MIME_EXT = {
+  'image/jpeg': '.jpg', 'image/png': '.png', 'image/gif': '.gif', 'image/webp': '.webp',
+  'video/mp4': '.mp4', 'video/quicktime': '.mov', 'video/x-msvideo': '.avi', 'video/webm': '.webm',
+};
+
 // 存储配置
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -18,7 +23,8 @@ const storage = multer.diskStorage({
     cb(null, isVideo ? videoDir : imageDir);
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
+    // 扩展名由 mimetype 决定，不信任客户端文件名（防止上传 .html 等可执行文件）
+    const ext = MIME_EXT[file.mimetype] || '';
     const name = Date.now() + '-' + Math.random().toString(36).substr(2, 9) + ext;
     cb(null, name);
   },

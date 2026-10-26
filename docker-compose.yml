@@ -52,7 +52,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-ave_center_pass}
       PORT: 3000
       NODE_ENV: production
-      JWT_SECRET: ${JWT_SECRET:-ave-center-secret-key-2026}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       CLIENT_URL: ${CLIENT_URL:-http://localhost}
     ports:
       - "3000:3000"

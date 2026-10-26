@@ -107,10 +107,10 @@ async function init() {
     if (!existingAdmin) {
       await Admin.create({
         username: 'admin',
-        password: 'admin123',
+        password: process.env.ADMIN_PASSWORD || require('crypto').randomBytes(12).toString('hex'),
         nickname: '超级管理员',
       });
-      console.log('✅ 默认管理员已创建 (admin / admin123)');
+      console.log('✅ 默认管理员已创建 (admin)，密码见 ADMIN_PASSWORD 或请手动重置');
     } else {
       console.log('ℹ️  默认管理员已存在');
     }
