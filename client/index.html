@@ -14,14 +14,7 @@
     </style>
   </head>
   <body>
-    <script>
-      if (new URLSearchParams(window.location.search).get('mode') === 'dark') {
-        document.documentElement.classList.add('dark')
-        if (/android/i.test(navigator.userAgent)) {
-          document.documentElement.classList.add('android')
-        }
-      }
-    </script>
+    <script src="/theme-init.js"></script>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

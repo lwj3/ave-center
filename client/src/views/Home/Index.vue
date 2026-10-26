@@ -22,7 +22,7 @@
           @click="goCategory(cat)"
         >
           <span class="category-icon">
-            <img :src="cat.icon"/>
+            <img :src="resolveUploadUrl(cat.icon)"/>
           </span>
           <span class="category-name">{{ cat.name }}</span>
         </div>

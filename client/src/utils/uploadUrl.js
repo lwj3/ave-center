@@ -4,6 +4,8 @@
  *
  * 例：/uploads/images/xxx.png → https://ave-center-end.luweijun.com/uploads/images/xxx.png
  */
+import { safeUrl } from './sanitize'
+
 const API_BASE = import.meta.env.VITE_API_BASE || ''
 const OLD_DOMAIN = 'https://ave-center-api.luweijun.com'
 
@@ -11,6 +13,7 @@ const OLD_DOMAIN = 'https://ave-center-api.luweijun.com'
  * 处理单个 URL：如果是 /uploads/ 开头，拼接后端域名；如果包含旧域名，替换为新域名
  */
 export function resolveUploadUrl(url) {
+  url = safeUrl(url)
   if (!url) return url
   if (url.startsWith(OLD_DOMAIN)) {
     return url.replace(OLD_DOMAIN, API_BASE)

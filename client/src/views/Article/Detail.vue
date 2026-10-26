@@ -91,6 +91,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticleDetail } from '../../api'
 import { resolveUploadUrl, resolveHtmlUploadUrls } from '../../utils/uploadUrl'
+import { sanitizeHtml } from '../../utils/sanitize'
 import defaultImg from '../../assets/default.png'
 
 const route = useRoute()
@@ -98,9 +99,9 @@ const article = ref(null)
 const recommended = ref([])
 const loading = ref(true)
 
-// 处理富文本中的上传文件路径（GitHub Pages 兼容）
+// 处理富文本中的上传文件路径（GitHub Pages 兼容），并过滤 XSS
 const articleContent = computed(() => {
-  return article.value ? resolveHtmlUploadUrls(article.value.content) : ''
+  return article.value ? sanitizeHtml(resolveHtmlUploadUrls(article.value.content)) : ''
 })
 
 const loadArticle = async () => {

@@ -11,7 +11,7 @@
       <el-table-column prop="icon" label="图标" width="120">
         <template #default="{ row }">
           <span style="font-size: 24px">
-            <img :src="row.icon" v-if="row.icon" style="width: 1em; height: 1em; margin-right: 8px" />
+            <img :src="resolveUploadUrl(row.icon)" v-if="row.icon" style="width: 1em; height: 1em; margin-right: 8px" />
           </span>
         </template>
       </el-table-column>
@@ -77,6 +77,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { adminGetCategories, adminCreateCategory, adminUpdateCategory, adminDeleteCategory } from '../../api'
+import { resolveUploadUrl } from '../../utils/uploadUrl'
 
 const categories = ref([])
 const loading = ref(false)
