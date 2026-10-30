@@ -3,3 +3,8 @@ node_modules/
 uploads/
 *.log
 .DS_Store
+
+# 数据库备份（仓库公开，禁止提交）
+*.sql
+*.sql.zip
+*.sql.gz
