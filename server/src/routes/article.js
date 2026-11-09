@@ -5,6 +5,7 @@ const { authMiddleware } = require('../middleware/auth');
 
 // 前台接口
 router.get('/home', articleController.homeData);
+router.get('/recommended', articleController.recommended);
 router.get('/', articleController.list);
 
 // 后台管理接口（需要认证，必须在 /:id 之前）

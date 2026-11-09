@@ -283,3 +283,21 @@ exports.homeData = async (req, res, next) => {
     });
   } catch (err) { next(err); }
 };
+
+// 推荐文章列表（不含 content，按创建时间倒序）
+exports.recommended = async (req, res, next) => {
+  try {
+    const list = await Article.findAll({
+      where: { status: 1, is_recommended: 1 },
+      attributes: { exclude: ['content'] },
+      include: [
+        { model: Category, as: 'category', attributes: ['id', 'name'] },
+        { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'], through: { attributes: [] } },
+      ],
+      order: [['created_at', 'DESC']],
+      limit: 10,
+    });
+
+    res.json({ code: 0, message: 'ok', data: list });
+  } catch (err) { next(err); }
+};

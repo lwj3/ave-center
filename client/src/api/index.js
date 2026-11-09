@@ -33,6 +33,9 @@ request.interceptors.response.use(
 // 首页数据
 export const getHomeData = () => request.get('/api/articles/home')
 
+// 推荐文章列表
+export const getRecommendedArticles = () => request.get('/api/articles/recommended')
+
 // 登录
 export const login = (data) => request.post('/api/auth/login', data)
 
