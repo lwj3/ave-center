@@ -1,14 +1,14 @@
 <template>
   <div class="article-detail-page">
-    <div class="nav">
+    <div class="nav" v-if="!inApp">
       <el-button link @click="$router.back()" class="back-btn">
         <el-icon><ArrowLeft /></el-icon>返回
       </el-button>
       <div class="text">正文</div>
     </div>
-    <div class="container detail-container">
+    <div class="container detail-container" :class="{ 'in-app': inApp }">
       <div v-if="loading" class="loading-wrapper">
-        <el-skeleton :rows="10" animated />
+        <el-skeleton :rows="4" animated />
       </div>
 
       <template v-else-if="article">
@@ -98,6 +98,7 @@ const route = useRoute()
 const article = ref(null)
 const recommended = ref([])
 const loading = ref(true)
+const inApp = computed(() => route.query.inApp === '1')
 
 // 处理富文本中的上传文件路径（GitHub Pages 兼容），并过滤 XSS
 const articleContent = computed(() => {
@@ -169,11 +170,15 @@ watch(() => route.params.id, () => {
   padding-top: 50px;
   padding-bottom: 40px;
 }
+.detail-container.in-app {
+  padding-top: 0;
+}
+
 
 .loading-wrapper,
 .empty-wrapper {
   flex: 1;
-  padding: 40px 0;
+  padding: 20px 0;
 }
 
 .article-main {

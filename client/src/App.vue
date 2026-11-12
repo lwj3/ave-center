@@ -125,6 +125,16 @@ html.dark .tag-chip {
   background: var(--bg-dark);
 }
 
+/* 骨架屏暗色 */
+html.dark .el-skeleton {
+  --el-skeleton-color: #1C2028;
+  --el-skeleton-to-color: #2A303A;
+}
+html.dark.android .el-skeleton {
+  --el-skeleton-color: #2C323C;
+  --el-skeleton-to-color: #3A414D;
+}
+
 /* 分页暗色 */
 html.dark .el-pagination {
   --el-pagination-bg-color: var(--bg-dark);
