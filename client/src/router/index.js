@@ -75,14 +75,31 @@ const router = createRouter({
   },
 })
 
+// 跳转时需要一直保留的 URL 参数
+const PERSIST_QUERY_KEYS = ['inApp', 'mode', 'lang']
+
+// 以首次进入页面时的 URL 参数为初始值
+const persistQuery = {}
+const initialParams = new URLSearchParams(window.location.search)
+PERSIST_QUERY_KEYS.forEach((key) => {
+  if (initialParams.has(key)) persistQuery[key] = initialParams.get(key)
+})
+
 // 路由守卫：保护需要登录的页面
 router.beforeEach((to, from, next) => {
   const adminStore = useAdminStore()
 
-  // 暗色模式：自动保留 mode=dark 参数
-  const isDark = document.documentElement.classList.contains('dark')
-  if (isDark && to.query.mode !== 'dark') {
-    return next({ ...to, query: { ...to.query, mode: 'dark' } })
+  // 保留全局参数（inApp、mode、lang 等）：目标地址缺少时自动补上
+  const missing = {}
+  PERSIST_QUERY_KEYS.forEach((key) => {
+    if (to.query[key] !== undefined) {
+      persistQuery[key] = to.query[key]
+    } else if (persistQuery[key] !== undefined) {
+      missing[key] = persistQuery[key]
+    }
+  })
+  if (Object.keys(missing).length) {
+    return next({ ...to, query: { ...to.query, ...missing } })
   }
 
   // GitHub Pages 404.html 回跳逻辑
