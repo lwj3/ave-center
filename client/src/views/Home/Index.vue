@@ -197,7 +197,8 @@ const loadHomeData = async () => {
     if (res.code === 0) {
       carousels.value = res.data.carousels || []
       categories.value = [...(res.data.categories || [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-      featured.value = res.data.featured || []
+      // 课程精选：与 /api/articles/recommended 同一份数据和排序（发布时间 > 更新时间 倒序）
+      featured.value = res.data.recommendedArticles || []
       hotArticles.value = res.data.hotArticles || []
     }
   } catch (err) {

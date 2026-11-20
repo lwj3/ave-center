@@ -216,7 +216,7 @@ const findRecommendedArticles = () => Article.findAll({
 // 获取首页数据（轮播 + 分类 + 热门文章）
 exports.homeData = async (req, res, next) => {
   try {
-    const [featuredArticles, categories, featured, recommendedArticles, hotArticles, latestArticles] = await Promise.all([
+    const [featuredArticles, categories, recommendedArticles, hotArticles, latestArticles] = await Promise.all([
       // 轮播 - 使用推荐到首页的文章
       Article.findAll({
         where: { status: 1, is_featured: 1 },
@@ -230,15 +230,7 @@ exports.homeData = async (req, res, next) => {
         where: { status: 1 },
         order: [['sort_order', 'DESC'], ['id', 'ASC']],
       }),
-      // 课程精选（首页）- 显示 is_recommended=1 的文章
-      Article.findAll({
-        where: { status: 1, is_recommended: 1 },
-        attributes: LIST_ATTRIBUTES,
-        include: LIST_INCLUDE,
-        order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
-        limit: 10,
-      }),
-      // 推荐文章列表（与 /recommended 一致）
+      // 推荐文章列表（与 /recommended 一致），首页"课程精选"也用这份
       findRecommendedArticles(),
       // 热门文章 - 从"热门内容"分类获取
       Article.findAll({
@@ -275,7 +267,6 @@ exports.homeData = async (req, res, next) => {
       data: {
         carousels,
         categories,
-        featured,
         hotArticles,
         latestArticles,
         recommendedArticles,
