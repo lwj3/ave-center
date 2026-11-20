@@ -196,19 +196,67 @@ exports.delete = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+// 列表类查询公共配置：不返回 content（富文本正文太大），tags 不带中间表字段
+const LIST_ATTRIBUTES = { exclude: ['content'] };
+const LIST_INCLUDE = [
+  { model: Category, as: 'category', attributes: ['id', 'name'] },
+  { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'], through: { attributes: [] } },
+];
+
+// 推荐文章：发布时间（created_at）倒序，相同再按更新时间倒序
+// /home 的 recommendedArticles 与 /recommended 共用，保证一致
+const findRecommendedArticles = () => Article.findAll({
+  where: { status: 1, is_recommended: 1 },
+  attributes: LIST_ATTRIBUTES,
+  include: LIST_INCLUDE,
+  order: [['created_at', 'DESC'], ['updated_at', 'DESC'], ['id', 'DESC']],
+  limit: 10,
+});
+
 // 获取首页数据（轮播 + 分类 + 热门文章）
 exports.homeData = async (req, res, next) => {
   try {
-    // 轮播 - 使用推荐到首页的文章
-    const featuredArticles = await Article.findAll({
-      where: { status: 1, is_featured: 1 },
-      include: [
-        { model: Category, as: 'category', attributes: ['id', 'name'] },
-        { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
-      ],
-      order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
-      limit: 5,
-    });
+    const [featuredArticles, categories, featured, recommendedArticles, hotArticles, latestArticles] = await Promise.all([
+      // 轮播 - 使用推荐到首页的文章
+      Article.findAll({
+        where: { status: 1, is_featured: 1 },
+        attributes: LIST_ATTRIBUTES,
+        include: LIST_INCLUDE,
+        order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
+        limit: 5,
+      }),
+      // 分类
+      Category.findAll({
+        where: { status: 1 },
+        order: [['sort_order', 'DESC'], ['id', 'ASC']],
+      }),
+      // 课程精选（首页）- 显示 is_recommended=1 的文章
+      Article.findAll({
+        where: { status: 1, is_recommended: 1 },
+        attributes: LIST_ATTRIBUTES,
+        include: LIST_INCLUDE,
+        order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
+        limit: 10,
+      }),
+      // 推荐文章列表（与 /recommended 一致）
+      findRecommendedArticles(),
+      // 热门文章 - 从"热门内容"分类获取
+      Article.findAll({
+        where: { status: 1, category_id: 5 },
+        attributes: LIST_ATTRIBUTES,
+        include: LIST_INCLUDE,
+        order: [['created_at', 'DESC']],
+        limit: 10,
+      }),
+      // 最新文章
+      Article.findAll({
+        where: { status: 1 },
+        attributes: LIST_ATTRIBUTES,
+        include: LIST_INCLUDE,
+        order: [['created_at', 'DESC']],
+        limit: 10,
+      }),
+    ]);
 
     // 转换为轮播格式
     const carousels = featuredArticles.map(article => ({
@@ -220,56 +268,6 @@ exports.homeData = async (req, res, next) => {
       article_id: article.id,
       sort_order: article.sort_order,
     }));
-
-    // 分类
-    const categories = await Category.findAll({
-      where: { status: 1 },
-      order: [['sort_order', 'DESC'], ['id', 'ASC']],
-    });
-
-    // 课程精选（首页）- 显示 is_recommended=1 的文章
-    const featured = await Article.findAll({
-      where: { status: 1, is_recommended: 1 },
-      include: [
-        { model: Category, as: 'category', attributes: ['id', 'name'] },
-        { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
-      ],
-      order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
-      limit: 10,
-    });
-
-    // 推荐文章列表
-    const recommendedArticles = await Article.findAll({
-      where: { status: 1, is_recommended: 1 },
-      include: [
-        { model: Category, as: 'category', attributes: ['id', 'name'] },
-        { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
-      ],
-      order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
-      limit: 10,
-    });
-
-    // 热门文章 - 从"热门内容"分类获取
-    const hotArticles = await Article.findAll({
-      where: { status: 1, category_id: 5 },
-      include: [
-        { model: Category, as: 'category', attributes: ['id', 'name'] },
-        { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
-      ],
-      order: [['created_at', 'DESC']],
-      limit: 10,
-    });
-
-    // 最新文章
-    const latestArticles = await Article.findAll({
-      where: { status: 1 },
-      include: [
-        { model: Category, as: 'category', attributes: ['id', 'name'] },
-        { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
-      ],
-      order: [['created_at', 'DESC']],
-      limit: 10,
-    });
 
     res.json({
       code: 0,
@@ -286,20 +284,10 @@ exports.homeData = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// 推荐文章列表（不含 content，按创建时间倒序）
+// 推荐文章列表（不含 content，发布时间 > 更新时间 倒序）
 exports.recommended = async (req, res, next) => {
   try {
-    const list = await Article.findAll({
-      where: { status: 1, is_recommended: 1 },
-      attributes: { exclude: ['content'] },
-      include: [
-        { model: Category, as: 'category', attributes: ['id', 'name'] },
-        { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'], through: { attributes: [] } },
-      ],
-      order: [['created_at', 'DESC']],
-      limit: 10,
-    });
-
+    const list = await findRecommendedArticles();
     res.json({ code: 0, message: 'ok', data: list });
   } catch (err) { next(err); }
 };
