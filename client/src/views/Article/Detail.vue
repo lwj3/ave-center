@@ -61,7 +61,9 @@
                 class="recommend-item"
                 @click="$router.push(`/article/${item.id}`)"
               >
-                <div class="recommend-thumb" :style="{ backgroundImage: `url(${item.cover_image ? resolveUploadUrl(item.cover_image) : defaultImg})` }"></div>
+                <div class="recommend-thumb">
+                  <img class="thumb-img" :src="item.cover_image ? resolveUploadUrl(item.cover_image) : defaultImg" alt="" loading="lazy" decoding="async" />
+                </div>
                 <div class="recommend-info">
                   <h4 class="recommend-title">{{ item.title }}</h4>
                   <span class="recommend-views">
@@ -92,7 +94,7 @@ import { useRoute } from 'vue-router'
 import { getArticleDetail } from '../../api'
 import { resolveUploadUrl, resolveHtmlUploadUrls } from '../../utils/uploadUrl'
 import { sanitizeHtml } from '../../utils/sanitize'
-import defaultImg from '../../assets/default.png'
+import defaultImg from '../../assets/default.webp'
 
 const route = useRoute()
 const article = ref(null)
@@ -400,9 +402,16 @@ watch(() => route.params.id, () => {
   height: 60px;
   border-radius: 6px;
   background: linear-gradient(135deg, #1a1a2e, #0f3460);
-  background-size: cover;
-  background-position: center;
+  position: relative;
   flex-shrink: 0;
+}
+.thumb-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
 }
 
 .recommend-info {

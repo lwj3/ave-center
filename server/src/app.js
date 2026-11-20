@@ -81,7 +81,11 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // 静态文件（uploads 需要 CORS 头，因为前端可能部署在不同域名）
-app.use('/uploads', cors(), express.static(path.join(__dirname, '../uploads')));
+// 文件名带时间戳 + 随机串，内容永不变化，可长期缓存（浏览器 + Cloudflare 边缘）
+app.use('/uploads', cors(), express.static(path.join(__dirname, '../uploads'), {
+  maxAge: '365d',
+  immutable: true,
+}));
 
 // API路由
 app.use('/api/auth', authLimiter, authRoutes);

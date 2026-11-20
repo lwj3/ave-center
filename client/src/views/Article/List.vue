@@ -53,7 +53,8 @@
           class="featured-card"
           @click="$router.push(`/article/${article.id}`)"
         >
-          <div class="featured-thumb" :style="{ backgroundImage: `url(${article.cover_image ? resolveUploadUrl(article.cover_image) : defaultImg})` }">
+          <div class="featured-thumb">
+            <img class="thumb-img" :src="article.cover_image ? resolveUploadUrl(article.cover_image) : defaultImg" alt="" loading="lazy" decoding="async" />
             <div v-if="article.video_url" class="play-icon">▶</div>
           </div>
           <div class="featured-info">
@@ -96,7 +97,7 @@ import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticles, getCategories } from '../../api'
 import { resolveUploadUrl } from '../../utils/uploadUrl'
-import defaultImg from '../../assets/default.png'
+import defaultImg from '../../assets/default.webp'
 
 const route = useRoute()
 const articles = ref([])
@@ -314,11 +315,17 @@ onBeforeUnmount(() => {
   width: 140px;
   height: 80px;
   background: #1a1a2e3d;
-  background-size: 100%;
-  background-position: center;
   position: relative;
   flex-shrink: 0;
   border-radius: 12px;
+}
+.thumb-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
 }
 
 .play-icon {

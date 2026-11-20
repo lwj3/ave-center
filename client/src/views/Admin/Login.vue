@@ -86,7 +86,7 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: url('../../assets/home-bg-2.png') center center fixed no-repeat;
+  background: url('../../assets/home-bg-2.webp') center center fixed no-repeat;
   background-size: cover;
 }
 

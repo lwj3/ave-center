@@ -1,5 +1,7 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 // 生产构建注入 CSP（GitHub Pages 无法设置响应头，只能用 meta）
 // 开发环境不注入，避免影响 HMR
@@ -31,7 +33,15 @@ function cspPlugin(apiBase) {
 }
 
 export default defineConfig(({ mode }) => ({
-  plugins: [vue(), cspPlugin(loadEnv(mode, process.cwd()).VITE_API_BASE)],
+  plugins: [
+    vue(),
+    // Element Plus 按需引入：模板里用到的 <el-xxx> 组件和 v-loading 指令自动 import（含样式）
+    Components({
+      resolvers: [ElementPlusResolver({ importStyle: 'css' })],
+      dts: false,
+    }),
+    cspPlugin(loadEnv(mode, process.cwd()).VITE_API_BASE),
+  ],
   base: '/',
   server: {
     port: 5173,
