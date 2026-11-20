@@ -446,6 +446,7 @@ watch(() => route.params.id, () => {
 
   .sidebar-card {
     position: static;
+    padding: 0;
   }
 
   .article-main {
