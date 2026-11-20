@@ -499,7 +499,8 @@ const loadData = async () => {
         form.value = {
           title: article.title,
           summary: article.summary || '',
-          content: article.content,
+          // 数据库存的是相对路径 /uploads/...，编辑器里需要带后端域名才能显示（保存时再还原）
+          content: resolveHtmlUploadUrls(article.content),
           cover_image: article.cover_image || '',
           video_url: article.video_url || '',
           category_id: article.category_id,
@@ -510,9 +511,9 @@ const loadData = async () => {
           is_featured: article.is_featured,
           is_recommended: article.is_recommended || 0,
         }
-        // 设置编辑器内容（替换相对路径为绝对路径）
+        // 编辑器已创建时同步一次（未创建时 v-model 会在创建后带入 form.content）
         if (editorRef.value) {
-          editorRef.value.setHtml(resolveHtmlUploadUrls(article.content))
+          editorRef.value.setHtml(form.value.content)
         }
       }
     } catch (err) {

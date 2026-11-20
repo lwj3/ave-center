@@ -179,6 +179,7 @@ watch(() => route.params.id, () => {
 .empty-wrapper {
   flex: 1;
   padding: 20px 0;
+  text-align: center;
 }
 
 .article-main {
