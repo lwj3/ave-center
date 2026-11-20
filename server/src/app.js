@@ -9,6 +9,7 @@ require('dotenv').config();
 const { sequelize } = require('./models');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const { authMiddleware } = require('./middleware/auth');
+const { clearCacheOnWrite } = require('./utils/cache');
 
 // 路由
 const authRoutes = require('./routes/auth');
@@ -35,27 +36,49 @@ app.use(helmet({
 // Gzip 压缩响应体
 app.use(compression());
 
-// 全局限流：按真实客户端 IP 隔离，互不影响
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 分钟窗口
-  max: process.env.NODE_ENV === 'production' ? 200 : 500,
-  keyGenerator: (req) => req.ip, // trust proxy 已开启，req.ip 为真实客户端 IP
+// 真实客户端 IP
+// 链路：用户 → Cloudflare → 宝塔 Nginx → Node。trust proxy=1 时 req.ip 是 Cloudflare 节点 IP，
+// 同一节点后的所有用户会共用限流额度，所以优先用 Cloudflare 传来的 CF-Connecting-IP。
+// 注意：源站应只允许 Cloudflare IP 访问（安全组），否则该头可被伪造。
+const clientIp = (req) => req.headers['cf-connecting-ip'] || req.ip;
+
+const isReadRequest = (req) => req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS';
+
+// 只读接口限流：宽松（App 用户常共用运营商出口 IP），只拦明显的刷接口
+// 公开只读接口还有内存缓存 + Cloudflare 缓存，大部分请求不会打到数据库
+const readLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 分钟窗口
+  max: parseInt(process.env.RATE_LIMIT_READ_PER_MIN) || 600,
+  keyGenerator: clientIp,
+  skip: (req) => !isReadRequest(req),
   message: { code: 429, message: '请求过于频繁，请稍后再试', data: null },
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-app.use(limiter);
+// 写接口限流（创建 / 修改 / 删除 / 上传）：严格
+const writeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 分钟窗口
+  max: parseInt(process.env.RATE_LIMIT_WRITE_PER_15MIN) || 300,
+  keyGenerator: clientIp,
+  skip: isReadRequest,
+  message: { code: 429, message: '请求过于频繁，请稍后再试', data: null },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
-// 登录接口单独限流（按真实 IP 隔离，更严格）
+// 登录接口单独限流（防爆破，更严格）
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  keyGenerator: (req) => req.ip,
+  keyGenerator: clientIp,
+  skip: (req) => req.method !== 'POST',
   message: { code: 429, message: '登录尝试过于频繁，请 15 分钟后再试', data: null },
   standardHeaders: true,
   legacyHeaders: false,
 });
+// 注：pm2 cluster 下每个进程各自计数（内存存储），实际额度约为 上限 × 进程数；
+// 需要精确的全局限流时可接入 Redis（rate-limit-redis）
 
 // 请求超时保护（防止慢请求占用连接）
 app.use((req, res, next) => {
@@ -76,16 +99,24 @@ app.use((req, res, next) => {
 //   }));
 // }
 
-// 中间件
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-
 // 静态文件（uploads 需要 CORS 头，因为前端可能部署在不同域名）
 // 文件名带时间戳 + 随机串，内容永不变化，可长期缓存（浏览器 + Cloudflare 边缘）
+// 放在限流之前：一个页面会加载很多图片，不计入接口限流
 app.use('/uploads', cors(), express.static(path.join(__dirname, '../uploads'), {
   maxAge: '365d',
   immutable: true,
 }));
+
+// 接口限流
+app.use('/api', readLimiter, writeLimiter);
+
+// 请求体上限：文章正文最大约几十 KB（图片走上传接口），2MB 足够；
+// 过大的上限会被利用来耗尽内存
+app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: process.env.JSON_BODY_LIMIT || '2mb' }));
+
+// 写操作成功后清空公开接口的内存缓存（首页 / 推荐）
+app.use('/api', clearCacheOnWrite);
 
 // API路由
 app.use('/api/auth', authLimiter, authRoutes);

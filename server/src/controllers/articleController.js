@@ -1,5 +1,6 @@
 const { Article, Category, Tag, ArticleTag, Carousel } = require('../models');
 const { Op } = require('sequelize');
+const { cached, setPublicCacheHeaders } = require('../utils/cache');
 
 // 文章列表（前台）
 exports.list = async (req, res, next) => {
@@ -9,10 +10,8 @@ exports.list = async (req, res, next) => {
     if (category_id) where.category_id = category_id;
     if (keyword) where.title = { [Op.like]: `%${keyword}%` };
 
-    const include = [
-      { model: Category, as: 'category', attributes: ['id', 'name'] },
-      { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
-    ];
+    // 复制一份再改，不能修改共享的 LIST_INCLUDE
+    const include = LIST_INCLUDE.map(i => ({ ...i }));
 
     if (tag_id) {
       include[1].where = { id: tag_id };
@@ -21,6 +20,7 @@ exports.list = async (req, res, next) => {
 
     const { count, rows } = await Article.findAndCountAll({
       where,
+      attributes: LIST_ATTRIBUTES, // 列表不返回 content
       include,
       distinct: true, // 解决 include 关联查询时 count 重复计数问题
       order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
@@ -63,10 +63,8 @@ exports.detail = async (req, res, next) => {
         is_recommended: 1,
         id: { [Op.ne]: id },
       },
-      include: [
-        { model: Category, as: 'category', attributes: ['id', 'name'] },
-        { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
-      ],
+      attributes: LIST_ATTRIBUTES, // 推荐列表不返回 content
+      include: LIST_INCLUDE,
       limit: 5,
       order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
     });
@@ -87,10 +85,8 @@ exports.adminList = async (req, res, next) => {
 
     const { count, rows } = await Article.findAndCountAll({
       where,
-      include: [
-        { model: Category, as: 'category', attributes: ['id', 'name'] },
-        { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
-      ],
+      attributes: LIST_ATTRIBUTES, // 列表不返回 content（编辑时走 /admin/:id 取完整内容）
+      include: LIST_INCLUDE,
       // 后台列表：最近创建或编辑的在前（新建时 updated_at = created_at）
       order: [['updated_at', 'DESC'], ['id', 'DESC']],
       distinct: true, // 关联 tags（多对多）时避免 total 按连接行重复计数
@@ -213,72 +209,79 @@ const findRecommendedArticles = () => Article.findAll({
   limit: 10,
 });
 
-// 获取首页数据（轮播 + 分类 + 热门文章）
+// 首页数据加载（轮播 + 分类 + 推荐 + 热门 + 最新）
+async function loadHomeData() {
+  const [featuredArticles, categories, recommendedArticles, hotArticles, latestArticles] = await Promise.all([
+    // 轮播 - 使用推荐到首页的文章
+    Article.findAll({
+      where: { status: 1, is_featured: 1 },
+      attributes: LIST_ATTRIBUTES,
+      include: LIST_INCLUDE,
+      order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
+      limit: 5,
+    }),
+    // 分类
+    Category.findAll({
+      where: { status: 1 },
+      order: [['sort_order', 'DESC'], ['id', 'ASC']],
+    }),
+    // 推荐文章列表（与 /recommended 一致），首页"课程精选"也用这份
+    findRecommendedArticles(),
+    // 热门文章 - 从"热门内容"分类获取
+    Article.findAll({
+      where: { status: 1, category_id: 5 },
+      attributes: LIST_ATTRIBUTES,
+      include: LIST_INCLUDE,
+      order: [['created_at', 'DESC']],
+      limit: 10,
+    }),
+    // 最新文章
+    Article.findAll({
+      where: { status: 1 },
+      attributes: LIST_ATTRIBUTES,
+      include: LIST_INCLUDE,
+      order: [['created_at', 'DESC']],
+      limit: 10,
+    }),
+  ]);
+
+  // 转换为轮播格式
+  const carousels = featuredArticles.map(article => ({
+    id: article.id,
+    title: article.title,
+    subtitle: article.summary || '',
+    image: article.cover_image || '',
+    link_url: `/article/${article.id}`,
+    article_id: article.id,
+    sort_order: article.sort_order,
+  }));
+
+  // 转成普通对象再缓存，避免多个请求共享同一批 Sequelize 实例
+  return JSON.parse(JSON.stringify({
+    carousels,
+    categories,
+    hotArticles,
+    latestArticles,
+    recommendedArticles,
+  }));
+}
+
+// 获取首页数据（内存缓存 + CDN 缓存）
 exports.homeData = async (req, res, next) => {
   try {
-    const [featuredArticles, categories, recommendedArticles, hotArticles, latestArticles] = await Promise.all([
-      // 轮播 - 使用推荐到首页的文章
-      Article.findAll({
-        where: { status: 1, is_featured: 1 },
-        attributes: LIST_ATTRIBUTES,
-        include: LIST_INCLUDE,
-        order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
-        limit: 5,
-      }),
-      // 分类
-      Category.findAll({
-        where: { status: 1 },
-        order: [['sort_order', 'DESC'], ['id', 'ASC']],
-      }),
-      // 推荐文章列表（与 /recommended 一致），首页"课程精选"也用这份
-      findRecommendedArticles(),
-      // 热门文章 - 从"热门内容"分类获取
-      Article.findAll({
-        where: { status: 1, category_id: 5 },
-        attributes: LIST_ATTRIBUTES,
-        include: LIST_INCLUDE,
-        order: [['created_at', 'DESC']],
-        limit: 10,
-      }),
-      // 最新文章
-      Article.findAll({
-        where: { status: 1 },
-        attributes: LIST_ATTRIBUTES,
-        include: LIST_INCLUDE,
-        order: [['created_at', 'DESC']],
-        limit: 10,
-      }),
-    ]);
-
-    // 转换为轮播格式
-    const carousels = featuredArticles.map(article => ({
-      id: article.id,
-      title: article.title,
-      subtitle: article.summary || '',
-      image: article.cover_image || '',
-      link_url: `/article/${article.id}`,
-      article_id: article.id,
-      sort_order: article.sort_order,
-    }));
-
-    res.json({
-      code: 0,
-      message: 'ok',
-      data: {
-        carousels,
-        categories,
-        hotArticles,
-        latestArticles,
-        recommendedArticles,
-      },
-    });
+    const data = await cached('articles:home', loadHomeData);
+    setPublicCacheHeaders(res);
+    res.json({ code: 0, message: 'ok', data });
   } catch (err) { next(err); }
 };
 
 // 推荐文章列表（不含 content，发布时间 > 更新时间 倒序）
 exports.recommended = async (req, res, next) => {
   try {
-    const list = await findRecommendedArticles();
+    // iOS / Android App 也在用：内存缓存 + CDN 缓存
+    const list = await cached('articles:recommended', async () =>
+      JSON.parse(JSON.stringify(await findRecommendedArticles())));
+    setPublicCacheHeaders(res);
     res.json({ code: 0, message: 'ok', data: list });
   } catch (err) { next(err); }
 };
