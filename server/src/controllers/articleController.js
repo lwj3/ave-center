@@ -91,7 +91,9 @@ exports.adminList = async (req, res, next) => {
         { model: Category, as: 'category', attributes: ['id', 'name'] },
         { model: Tag, as: 'tags', attributes: ['id', 'name', 'color'] },
       ],
-      order: [['sort_order', 'DESC'], ['created_at', 'DESC']],
+      // 后台列表：最近创建或编辑的在前（新建时 updated_at = created_at）
+      order: [['updated_at', 'DESC'], ['id', 'DESC']],
+      distinct: true, // 关联 tags（多对多）时避免 total 按连接行重复计数
       limit: parseInt(pageSize),
       offset: (parseInt(page) - 1) * parseInt(pageSize),
     });

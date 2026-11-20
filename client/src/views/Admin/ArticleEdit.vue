@@ -246,7 +246,7 @@ import {
   adminGetArticle, adminCreateArticle, adminUpdateArticle,
   adminGetCategories, getTags, uploadFile, adminGetFiles,
 } from '../../api'
-import { resolveUploadUrl, resolveHtmlUploadUrls } from '../../utils/uploadUrl'
+import { resolveUploadUrl, resolveHtmlUploadUrls, toRelativeUploadUrls } from '../../utils/uploadUrl'
 
 const route = useRoute()
 const router = useRouter()
@@ -534,7 +534,8 @@ const handleSubmit = async () => {
 
   submitting.value = true
   try {
-    const data = { ...form.value }
+    // 富文本里的上传文件只存相对路径，后端换域名时不用改数据
+    const data = { ...form.value, content: toRelativeUploadUrls(form.value.content) }
     let res
     if (isEdit.value) {
       res = await adminUpdateArticle(route.params.id, data)
