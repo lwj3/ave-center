@@ -4,4 +4,7 @@ if (new URLSearchParams(window.location.search).get('mode') === 'dark') {
   if (/android/i.test(navigator.userAgent)) {
     document.documentElement.classList.add('android')
   }
+  // 页面默认声明 color-scheme: light only（阻止浏览器自动变暗），暗色模式下改回 dark
+  var meta = document.querySelector('meta[name="color-scheme"]')
+  if (meta) meta.setAttribute('content', 'dark')
 }

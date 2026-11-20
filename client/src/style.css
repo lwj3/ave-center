@@ -17,6 +17,16 @@ body {
   color: #333;
 }
 
+/* 亮色模式明确设置背景和配色方案：
+   不设置时背景透明，手机浏览器在系统深色模式下会填成黑色，导致页面一半暗一半亮 */
+html,
+body {
+  background-color: #fff;
+}
+html {
+  color-scheme: light only;
+}
+
 a {
   text-decoration: none;
   color: inherit;

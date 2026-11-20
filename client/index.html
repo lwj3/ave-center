@@ -4,10 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 声明页面只用亮色：阻止手机浏览器 / WebView 按系统深色模式自动把网页变暗。
+         ?mode=dark 时由 theme-init.js 改为 dark -->
+    <meta name="color-scheme" content="light only" />
     <meta name="description" content="AVE学习中心 - 产品教程、交易进阶、专题课程" />
     <title>AVE学习中心</title>
     <style>
-      html.dark { background-color: #080A0E; color: #fff; }
+      html { color-scheme: light only; background-color: #fff; }
+      html.dark { color-scheme: dark; background-color: #080A0E; color: #fff; }
       html.dark body { background-color: #080A0E; }
       html.dark.android { background-color: #21262F; }
       html.dark.android body { background-color: #21262F; }
