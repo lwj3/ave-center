@@ -83,9 +83,6 @@
       <div v-else class="empty-wrapper">
         <el-empty description="文章不存在" />
       </div>
-      <div class="back">
-        <el-button type="primary" @click="$router.push('/')">返回首页</el-button>
-      </div>
     </div>
   </div>
 </template>
@@ -191,9 +188,6 @@ watch(() => route.params.id, () => {
   border-radius: 12px;
   padding: 32px;
   min-width: 0;
-}
-.back{
-  text-align: center;
 }
 
 .back-to-list {
