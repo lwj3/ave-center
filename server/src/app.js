@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const net = require('net');
 const compression = require('compression');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -40,7 +41,34 @@ app.use(compression());
 // 链路：用户 → Cloudflare → 宝塔 Nginx → Node。trust proxy=1 时 req.ip 是 Cloudflare 节点 IP，
 // 同一节点后的所有用户会共用限流额度，所以优先用 Cloudflare 传来的 CF-Connecting-IP。
 // 注意：源站应只允许 Cloudflare IP 访问（安全组），否则该头可被伪造。
-const clientIp = (req) => req.headers['cf-connecting-ip'] || req.ip;
+// 只有请求确实来自 Cloudflare 节点时才信任 CF-Connecting-IP：
+// 绕过 CF 直连源站的请求可以伪造这个头（每次换一个值）来绕过限流
+// IP 段来源：https://www.cloudflare.com/ips/
+const CLOUDFLARE_IPV4 = [
+  '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22',
+  '141.101.64.0/18', '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20',
+  '197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/13',
+  '104.24.0.0/14', '172.64.0.0/13', '131.0.72.0/22',
+];
+const CLOUDFLARE_IPV6 = [
+  '2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32',
+  '2405:8100::/32', '2a06:98c0::/29', '2c0f:f248::/32',
+];
+const cloudflareIps = new net.BlockList();
+CLOUDFLARE_IPV4.forEach((c) => { const [ip, len] = c.split('/'); cloudflareIps.addSubnet(ip, +len, 'ipv4'); });
+CLOUDFLARE_IPV6.forEach((c) => { const [ip, len] = c.split('/'); cloudflareIps.addSubnet(ip, +len, 'ipv6'); });
+
+const isCloudflareIp = (ip) => {
+  if (!ip) return false;
+  const v4 = ip.startsWith('::ffff:') ? ip.slice(7) : ip;
+  if (net.isIPv4(v4)) return cloudflareIps.check(v4, 'ipv4');
+  if (net.isIPv6(ip)) return cloudflareIps.check(ip, 'ipv6');
+  return false;
+};
+
+// req.ip（trust proxy=1）= 连到 Nginx 的对端 IP：走 CF 时是 CF 节点，直连时是攻击者真实 IP
+const clientIp = (req) =>
+  (isCloudflareIp(req.ip) && req.headers['cf-connecting-ip']) || req.ip;
 
 const isReadRequest = (req) => req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS';
 

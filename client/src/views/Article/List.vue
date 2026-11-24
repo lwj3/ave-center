@@ -1,6 +1,6 @@
 <template>
   <div class="article-list-page">
-    <div class="nav">
+    <div class="nav" v-if="!inApp">
       <el-button link @click="$router.push('/')" class="back-btn">
         <el-icon><ArrowLeft /></el-icon>返回
       </el-button>
@@ -93,7 +93,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, onMounted, computed, onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticles, getCategories } from '../../api'
 import { resolveUploadUrl } from '../../utils/uploadUrl'
@@ -113,6 +113,8 @@ const categoryName = ref(route.query.category_name || '')
 const tagName = ref(route.query.tag_name || '')
 const subCategories = ref([])
 const activeSubCategoryId = ref(null)
+
+const inApp = computed(() => route.query.inApp === '1')
 
 // 加载子分类
 const loadSubCategories = async () => {

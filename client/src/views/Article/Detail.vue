@@ -95,10 +95,10 @@ import { resolveUploadUrl, resolveHtmlUploadUrls } from '../../utils/uploadUrl'
 import { sanitizeHtml } from '../../utils/sanitize'
 import defaultImg from '../../assets/default.webp'
 
-const route = useRoute()
 const article = ref(null)
 const recommended = ref([])
 const loading = ref(true)
+const route = useRoute()
 const inApp = computed(() => route.query.inApp === '1')
 
 // 处理富文本中的上传文件路径（GitHub Pages 兼容），并过滤 XSS
