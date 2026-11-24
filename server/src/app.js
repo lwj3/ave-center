@@ -95,11 +95,13 @@ const writeLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// 登录接口单独限流（防爆破，更严格）
+// 登录接口单独限流（防爆破，更严格）：同一 IP 15 分钟内最多失败 10 次
+// 只统计失败的请求，管理员正常登录不占额度；按用户名的锁定见 utils/loginGuard.js
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
   keyGenerator: clientIp,
+  skipSuccessfulRequests: true,
   skip: (req) => req.method !== 'POST',
   message: { code: 429, message: '登录尝试过于频繁，请 15 分钟后再试', data: null },
   standardHeaders: true,
@@ -134,6 +136,9 @@ app.use('/uploads', cors(), express.static(path.join(__dirname, '../uploads'), {
   maxAge: '365d',
   immutable: true,
 }));
+
+// 记下真实客户端 IP，供日志使用
+app.use((req, res, next) => { req.clientIp = clientIp(req); next(); });
 
 // 接口限流
 app.use('/api', readLimiter, writeLimiter);
